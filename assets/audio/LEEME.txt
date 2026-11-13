@@ -1,0 +1,7 @@
+Música de fondo (opcional)
+
+Guardá acá la pista (mp3 o m4a) y poné su ruta en config/evento.js → musica.archivo,
+por ejemplo: "assets/audio/tema.mp3".
+
+Usá solo música con autorización de uso: propia, comprada con licencia o libre de derechos.
+Si no hay archivo, la invitación funciona normalmente sin música.

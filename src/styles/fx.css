@@ -1,0 +1,166 @@
+/* ══════════════════════════════════════════════════════════════
+   Ambientación continua: capa fija detrás de todo el contenido.
+   Solo se animan transform y opacity (compositor).
+   ══════════════════════════════════════════════════════════════ */
+.fx {
+  position: fixed; inset: 0; z-index: -1;
+  overflow: hidden; pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, #1d0b38 0%, transparent 60%),
+    linear-gradient(180deg, #0b0516 0%, var(--c-bg) 100%);
+  contain: strict;
+}
+
+/* Gradientes luminosos: canvas de baja resolución, escalado por CSS */
+.fx__aurora { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.95; }
+
+/* Haces de luz que barren la escena */
+.fx__beams { position: absolute; inset: 0; }
+.beam {
+  position: absolute; top: -8vh; left: var(--x);
+  width: 46vh; height: 135vh;
+  margin-left: -23vh;
+  transform-origin: 50% 0;
+  background: conic-gradient(from calc(180deg - var(--spread) / 2) at 50% 0%,
+      transparent 0deg,
+      var(--beam) calc(var(--spread) * 0.5),
+      transparent var(--spread));
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.65) 45%, transparent 92%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.65) 45%, transparent 92%);
+  opacity: var(--o, 0.5);
+  animation: beam-sweep var(--dur) var(--ease-in-out) infinite alternate;
+  animation-delay: var(--delay);
+  will-change: transform;
+}
+.beam--a { --x: 8%;  --spread: 15deg; --beam: rgba(255, 45, 149, 0.30); --dur: 13s; --delay: -4s; --from: -26deg; --to: 14deg; }
+.beam--b { --x: 92%; --spread: 13deg; --beam: rgba(139, 61, 255, 0.34); --dur: 16s; --delay: -9s; --from: 24deg; --to: -16deg; }
+.beam--c { --x: 50%; --spread: 10deg; --beam: rgba(235, 228, 255, 0.16); --dur: 19s; --delay: -2s; --from: -20deg; --to: 20deg; }
+@keyframes beam-sweep {
+  from { transform: rotate(var(--from)); }
+  to { transform: rotate(var(--to)); }
+}
+
+/* Reflejos de la bola: cruzan la pantalla como en un salón real
+   (la bola gira sobre su eje vertical → los reflejos barren en horizontal) */
+.fx__reflections { position: absolute; inset: 0; }
+.orb {
+  position: absolute; left: 0; top: var(--y);
+  animation: drift var(--dur) linear infinite;
+  animation-delay: var(--d);
+  will-change: transform;
+}
+.orb > i {
+  position: absolute; display: block;
+  width: var(--w); height: calc(var(--w) * 0.62);
+  margin: calc(var(--w) * -0.31) 0 0 calc(var(--w) * -0.5);
+  border-radius: 50%;
+  transform: rotate(var(--tilt));
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95), rgba(var(--rgb), 0.55) 45%, rgba(var(--rgb), 0) 100%);
+  opacity: var(--o);
+  animation: twinkle var(--tw) ease-in-out infinite alternate;
+  animation-delay: var(--twd);
+}
+@keyframes drift {
+  from { transform: translate3d(-8vw, 0, 0); }
+  to { transform: translate3d(108vw, 0, 0); }
+}
+@keyframes twinkle {
+  from { opacity: calc(var(--o) * 0.3); }
+  to { opacity: var(--o); }
+}
+
+/* Destellos y partículas */
+.fx__sparkles { position: absolute; inset: 0; }
+.sparkle {
+  position: absolute; left: var(--x); top: var(--y);
+  width: var(--s); height: var(--s);
+  color: #fff;
+  opacity: 0;
+  animation: sparkle var(--dur) ease-in-out infinite;
+  animation-delay: var(--d);
+}
+.sparkle svg { width: 100%; height: 100%; fill: currentColor; filter: drop-shadow(0 0 4px rgba(255, 150, 210, 0.9)); }
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  45%, 55% { opacity: var(--o, 0.75); transform: scale(1) rotate(25deg); }
+}
+.glitter {
+  position: absolute; left: var(--x); bottom: -4vh;
+  width: var(--s); height: var(--s); border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 6px rgba(255, 140, 210, 0.9);
+  opacity: 0;
+  animation: glitter var(--dur) linear infinite;
+  animation-delay: var(--d);
+}
+@keyframes glitter {
+  0% { opacity: 0; transform: translate3d(0, 0, 0); }
+  12% { opacity: var(--o, 0.6); }
+  85% { opacity: var(--o, 0.6); }
+  100% { opacity: 0; transform: translate3d(var(--dx), -112vh, 0); }
+}
+
+/* Grano fino: rompe el banding de los gradientes */
+.fx__grain {
+  position: absolute; inset: 0;
+  background-image: var(--grain, none);
+  background-size: 160px 160px;
+  opacity: 0.07;
+}
+
+/* ── Marquee entre escenas ── */
+.marquee {
+  position: relative; z-index: 1;
+  margin: 0 -6vw;
+  padding: 14px 0;
+  transform: rotate(-2.4deg);
+  background: linear-gradient(90deg, rgba(224, 18, 122, 0.92), rgba(123, 44, 255, 0.92));
+  box-shadow: 0 0 40px rgba(224, 18, 122, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee--alt { transform: rotate(2deg); background: linear-gradient(90deg, #ffffff, #d6d1e4 45%, #a7a0bb 52%, #f6f3fd); box-shadow: 0 0 40px rgba(220, 216, 232, 0.25); }
+.marquee__track {
+  display: inline-flex; align-items: center;
+  animation: marquee var(--marquee-dur, 38s) linear infinite;
+  will-change: transform;
+}
+.marquee__group { display: inline-flex; align-items: center; flex: none; }
+.marquee__item {
+  display: inline-flex; align-items: center; gap: 22px; padding-right: 22px;
+  font-family: var(--f-display); font-weight: 800; font-size: clamp(15px, 4vw, 24px);
+  letter-spacing: 0.08em; text-transform: uppercase; color: #fff;
+}
+.marquee--alt .marquee__item { color: #1a0a2e; }
+.marquee__item .i { width: 0.9em; height: 0.9em; }
+.marquee__item em { font-family: var(--f-glam); font-style: italic; font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 1.25em; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ══ Interruptor global de movimiento ══
+   data-motion="off" (efectos pausados, movimiento reducido o pestaña oculta):
+   todo bucle CSS se congela en su lugar. Los canvas dibujan un cuadro fijo. */
+html[data-motion="off"] .fx *,
+html[data-motion="off"] .marquee__track,
+html[data-motion="off"] .hero__rig,
+html[data-motion="off"] .btn::after,
+html[data-motion="off"] .vinyl__disc,
+html[data-motion="off"] .mirror-star,
+html[data-motion="off"] .floor__tile,
+html[data-motion="off"] .hero__fifteen::after,
+html[data-motion="off"] .name-line__inner::after,
+html[data-motion="off"] .ambient-loop,
+html.is-tab-hidden * {
+  animation-play-state: paused !important;
+}
+html[data-motion="off"] .btn::after { opacity: 0; }
+
+/* Menos capas en equipos modestos */
+html[data-quality="low"] .beam--c,
+html[data-quality="low"] .fx__grain { display: none; }
+
+/* La banda inclinada es más ancha que la pantalla: el contenedor la recorta
+   para que nunca genere scroll horizontal (ni agrande el viewport en celulares). */
+.marquee-wrap { position: relative; z-index: 1; overflow: hidden; padding: 30px 0; margin: -30px 0; pointer-events: none; }
+
+/* Escenas fuera de pantalla: sus bucles CSS se congelan (los canvas tienen su propio control) */
+.is-offscreen, .is-offscreen *, .is-offscreen *::before, .is-offscreen *::after { animation-play-state: paused !important; }

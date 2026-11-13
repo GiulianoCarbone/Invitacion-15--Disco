@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es-AR" data-motion="on">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mis 15 · Una noche para brillar</title>
+  <meta name="description" content="Te invito a mis 15. Entrá para ver todos los detalles de la fiesta y confirmar tu asistencia.">
+  <meta name="theme-color" content="#07040d">
+  <meta name="color-scheme" content="dark">
+
+  <!-- Vista previa al compartir (el build completa título, URL e imagen absoluta desde config/evento.js) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:title" content="Mis 15 · Una noche para brillar">
+  <meta property="og:description" content="Te invito a mis 15. Entrá para ver todos los detalles de la fiesta y confirmar tu asistencia.">
+  <meta property="og:image" content="assets/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Bola disco plateada con luces fucsia y violeta: Mis 15, una noche para brillar.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <link rel="preload" href="assets/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/bodoni-moda-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="src/styles/tokens.css">
+  <link rel="stylesheet" href="src/styles/base.css">
+  <link rel="stylesheet" href="src/styles/fx.css">
+  <link rel="stylesheet" href="src/styles/scenes.css">
+  <link rel="stylesheet" href="src/styles/ui.css">
+
+  <script>document.documentElement.classList.add('js');</script>
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+  <!-- Íconos: una sola familia de trazo -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-calendar-plus" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M4.5 11.2 19.5 4.5l-6.7 15-1.9-6.4z"/></symbol>
+    <symbol id="i-hanger" viewBox="0 0 24 24"><path d="M10 6.2a2 2 0 1 1 3 1.7c-.6.4-1 .9-1 1.6v.3l8.1 5.7a1.4 1.4 0 0 1-.8 2.5H4.7a1.4 1.4 0 0 1-.8-2.5L12 9.8"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="4.5" rx="1"/><path d="M5 12.5V20h14v-7.5M12 8v12M12 8S10.8 3.6 8.4 4.1C6.5 4.6 7 7.6 12 8zm0 0s1.2-4.4 3.6-3.9c1.9.5 1.4 3.5-3.6 3.9z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6A2.5 2.5 0 0 0 13 3.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 17.5V5.8l10.5-2.3v11.7"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="17" cy="15.2" r="2.5"/></symbol>
+    <symbol id="i-music-off" viewBox="0 0 24 24"><path d="M9 17.5V9.2M9 5.8l10.5-2.3v8.2"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="M3.5 3.5l17 17"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M10.5 3.5l1.7 5 5 1.7-5 1.7-1.7 5-1.7-5-5-1.7 5-1.7z"/><path d="M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+    <symbol id="i-sparkles-off" viewBox="0 0 24 24"><path d="M10.5 3.5l1.7 5 5 1.7-5 1.7-1.7 5-1.7-5-5-1.7 5-1.7z"/><path d="M3.5 20.5l17-17"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.4 7.6L3.5 20.5l1.3-4.4A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M8.5 11.8h.01M12 11.8h.01M15.5 11.8h.01"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6.5 13.5 12 19l5.5-5.5"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.5-2h4.4l1.5 2h1.8A2.5 2.5 0 0 1 20 8.5V17a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
+    <symbol id="i-disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.5"/><path d="M16.5 7.5a6.3 6.3 0 0 1 1.4 2.4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+    <symbol id="i-utensils" viewBox="0 0 24 24"><path d="M6 3v7a2 2 0 0 0 2 2v9M10 3v7a2 2 0 0 1-2 2M8 3v6M17.5 21V3c-2.3 1.2-3.5 3.6-3.5 7v3h3.5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.9v.1"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8.5 8.5M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 14.5h4"/></symbol>
+    <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9.5 3.5 7.5 20.5M16.5 3.5l-2 17M4.5 8.5h16M3.5 15.5h16"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path class="fill" d="M12 1.5c.7 5.4 3.4 8.6 10.5 10.5-7.1 1.9-9.8 5.1-10.5 10.5C11.3 17.1 8.6 13.9 1.5 12 8.6 10.1 11.3 6.9 12 1.5z"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#confirmar">Ir a confirmar asistencia</a>
+
+  <!-- ══ Ambientación continua (decorativa) ══ -->
+  <div class="fx" aria-hidden="true">
+    <canvas class="fx__aurora"></canvas>
+    <div class="fx__beams">
+      <span class="beam beam--a"></span>
+      <span class="beam beam--b"></span>
+      <span class="beam beam--c"></span>
+    </div>
+    <div class="fx__reflections"></div>
+    <div class="fx__sparkles"></div>
+    <div class="fx__grain"></div>
+  </div>
+
+  <!-- ══ Portada de entrada ══ -->
+  <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-describedby="intro-kicker" hidden>
+    <div class="intro__glow" aria-hidden="true"></div>
+    <div class="intro__stage">
+      <div class="intro__ball" aria-hidden="true"><canvas data-ball="intro"></canvas></div>
+      <p class="intro__kicker" id="intro-kicker" data-bind="textos.portada">Una noche para brillar.</p>
+      <p class="intro__title" id="intro-title"><span class="intro__name" data-bind="nombre"></span><span class="intro__sep" aria-hidden="true">·</span><span class="intro__xv">Mis 15</span></p>
+      <div class="intro__actions" data-intro-actions>
+        <button type="button" class="btn btn--primary btn--xl" data-enter="silent">
+          <span>Entrar a la fiesta</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main id="contenido">
+    <!-- ══ Hero ══ -->
+    <section class="hero" id="inicio" aria-labelledby="hero-name">
+      <div class="hero__watermark" aria-hidden="true">15</div>
+      <div class="hero__rig" aria-hidden="true">
+        <span class="hero__chain"></span>
+        <div class="hero__ball"><canvas data-ball="hero"></canvas></div>
+      </div>
+      <div class="hero__type">
+        <h1 class="hero__name" id="hero-name" tabindex="-1">
+          <span class="hero__name-lines" data-fit-name></span>
+        </h1>
+        <p class="hero__xv" aria-label="Mis 15">
+          <span class="hero__mis" aria-hidden="true">mis</span><span class="hero__fifteen-wrap" aria-hidden="true"><span class="hero__fifteen" data-text="15">15</span></span>
+        </p>
+        <p class="hero__date"><span class="hero__date-pill" data-bind="fechaVisible"></span></p>
+        <p class="hero__phrase" data-bind="textos.hero"></p>
+      </div>
+      <a class="hero__cue" href="#cuenta" data-scroll-cue>
+        <span>Deslizá</span>
+        <svg class="i" aria-hidden="true"><use href="#i-arrow-down"/></svg>
+      </a>
+    </section>
+
+    <div class="marquee-wrap" aria-hidden="true"><div class="marquee" data-marquee="intro"></div></div>
+
+    <!-- ══ Cuenta regresiva ══ -->
+    <section class="scene countdown" id="cuenta" aria-labelledby="cuenta-title" data-section="cuentaRegresiva">
+      <header class="scene__head" data-reveal>
+        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>Cuenta regresiva</p>
+        <h2 class="title" id="cuenta-title" data-bind="textos.cuentaTitulo"></h2>
+      </header>
+      <div class="countdown__body" data-reveal>
+        <div class="countdown__grid" data-countdown role="timer" aria-live="off">
+          <div class="cd-cell"><span class="cd-num" data-unit="d">--</span><span class="cd-label" data-label="d">días</span></div>
+          <div class="cd-cell"><span class="cd-num" data-unit="h">--</span><span class="cd-label" data-label="h">horas</span></div>
+          <div class="cd-cell"><span class="cd-num" data-unit="m">--</span><span class="cd-label" data-label="m">minutos</span></div>
+          <div class="cd-cell"><span class="cd-num" data-unit="s">--</span><span class="cd-label" data-label="s">segundos</span></div>
+        </div>
+        <p class="sr-only" data-countdown-sr></p>
+        <div class="countdown__state" data-countdown-state hidden></div>
+      </div>
+    </section>
+
+    <!-- ══ Cuándo y dónde ══ -->
+    <section class="scene venue" id="info" aria-labelledby="info-title">
+      <header class="scene__head" data-reveal>
+        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Cuándo y dónde</p>
+        <h2 class="title" id="info-title" data-bind="textos.lugarTitulo"></h2>
+      </header>
+      <div class="venue__tickets" data-venue></div>
+    </section>
+
+    <!-- ══ Dress code ══ -->
+    <section class="scene dress" id="dress-code" aria-labelledby="dress-title" data-section="dressCode">
+      <div class="dress__word" aria-hidden="true"><span>DRESS</span><span>CODE</span></div>
+      <div class="dress__ornament" aria-hidden="true"><span class="mirror-star"></span><span class="mirror-star mirror-star--sm"></span></div>
+      <header class="scene__head" data-reveal>
+        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-hanger"/></svg>Dress code</p>
+        <h2 class="title" id="dress-title" data-bind="textos.dressTitulo"></h2>
+      </header>
+      <div class="dress__body" data-reveal>
+        <p class="dress__style"><span data-bind="dressCode.estilo"></span></p>
+        <p class="dress__notes" data-bind="dressCode.indicaciones"></p>
+        <div class="dress__colors" data-dress-colors hidden>
+          <p class="dress__colors-title" data-bind="dressCode.notaColores"></p>
+          <ul class="swatches" data-swatches></ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee-wrap" aria-hidden="true"><div class="marquee marquee--alt" data-marquee="rsvp"></div></div>
+
+    <!-- ══ Confirmación ══ -->
+    <section class="scene rsvp" id="confirmar" aria-labelledby="rsvp-title">
+      <div class="rsvp__floor" aria-hidden="true"><div class="floor" data-floor></div></div>
+      <header class="scene__head scene__head--center" data-reveal>
+        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Confirmación</p>
+        <h2 class="title title--xl" id="rsvp-title" data-bind="textos.rsvpTitulo"></h2>
+        <p class="rsvp__deadline" data-rsvp-deadline></p>
+      </header>
+
+      <form class="rsvp__form panel" data-rsvp-form novalidate data-reveal>
+        <div class="field">
+          <label class="field__label" for="rsvp-name">Nombre y apellido</label>
+          <div class="field__control">
+            <svg class="i" aria-hidden="true"><use href="#i-user"/></svg>
+            <input id="rsvp-name" name="nombre" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="80" required aria-describedby="rsvp-name-error">
+          </div>
+          <p class="field__error" id="rsvp-name-error" hidden></p>
+        </div>
+
+        <fieldset class="field field--choice" aria-describedby="rsvp-attend-error">
+          <legend class="field__label">¿Venís a la fiesta?</legend>
+          <div class="choice">
+            <label class="choice__opt">
+              <input type="radio" name="asistencia" value="si" required>
+              <span class="choice__box"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>¡Sí, voy!</span>
+            </label>
+            <label class="choice__opt">
+              <input type="radio" name="asistencia" value="no">
+              <span class="choice__box"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>No puedo ir</span>
+            </label>
+          </div>
+          <p class="field__error" id="rsvp-attend-error" hidden></p>
+        </fieldset>
+
+        <div class="field" data-guests hidden>
+          <label class="field__label" for="rsvp-guests">¿Cuántas personas son, contándote?</label>
+          <div class="stepper">
+            <button type="button" class="stepper__btn" data-step="-1" aria-label="Restar una persona"><svg class="i" aria-hidden="true"><use href="#i-minus"/></svg></button>
+            <input id="rsvp-guests" name="asistentes" type="number" inputmode="numeric" min="1" max="4" value="1" aria-describedby="rsvp-guests-hint">
+            <button type="button" class="stepper__btn" data-step="1" aria-label="Sumar una persona"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></button>
+          </div>
+          <p class="field__hint" id="rsvp-guests-hint"></p>
+        </div>
+
+        <div class="field" data-diet hidden>
+          <label class="field__label" for="rsvp-diet">Restricciones alimentarias <span class="field__opt">(opcional)</span></label>
+          <div class="field__control">
+            <svg class="i" aria-hidden="true"><use href="#i-utensils"/></svg>
+            <input id="rsvp-diet" name="restricciones" type="text" maxlength="140" placeholder="Vegetariano, celíaco, alergias…" enterkeyhint="done">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block btn--xl" data-rsvp-submit>
+          <svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>
+          <span>Abrir WhatsApp para confirmar</span>
+        </button>
+        <p class="rsvp__note">Se abre WhatsApp con tu mensaje listo. Tu confirmación queda hecha cuando lo envíes.</p>
+        <div class="rsvp__status" data-rsvp-status role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <!-- ══ Regalos ══ -->
+    <section class="scene gifts" id="regalos" aria-labelledby="gifts-title" data-section="regalos">
+      <div class="gifts__inner" data-reveal>
+        <div class="gifts__icon mirror-disc" aria-hidden="true"><svg class="i"><use href="#i-gift"/></svg></div>
+        <h2 class="title" id="gifts-title" data-bind="textos.regalosTitulo"></h2>
+        <p class="gifts__text" data-bind="textos.regalosTexto"></p>
+        <button type="button" class="btn btn--chrome" data-open-gift aria-haspopup="dialog">
+          <svg class="i" aria-hidden="true"><use href="#i-gift"/></svg>
+          <span>Ver datos para un regalo</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ══ Participación ══ -->
+    <section class="scene extras" id="participa" aria-label="Participá de la fiesta" data-extras>
+      <article class="song" data-section="cancion" data-reveal aria-labelledby="song-title">
+        <div class="vinyl" aria-hidden="true"><div class="vinyl__disc"><span class="vinyl__label"><span data-bind="inicial"></span></span></div></div>
+        <div class="song__body">
+          <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-music"/></svg>Playlist</p>
+          <h2 class="title title--md" id="song-title" data-bind="textos.cancionTitulo"></h2>
+          <form class="song__form" data-song-form novalidate>
+            <div class="field" data-song-field>
+              <label class="field__label" for="song-input">Tema y artista</label>
+              <div class="field__control">
+                <svg class="i" aria-hidden="true"><use href="#i-disc"/></svg>
+                <input id="song-input" name="tema" type="text" maxlength="120" placeholder="Ej: Dancing Queen – ABBA" enterkeyhint="send" aria-describedby="song-error">
+              </div>
+              <p class="field__error" id="song-error" hidden></p>
+            </div>
+            <button type="submit" class="btn btn--ghost btn--block" data-song-submit>
+              <svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>
+              <span>Sugerir tema</span>
+            </button>
+            <p class="song__status" data-song-status role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </article>
+
+      <article class="photos" data-section="fotos" data-reveal aria-labelledby="photos-title">
+        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>Fotos de la noche</p>
+        <h2 class="title title--md" id="photos-title" data-bind="textos.fotosTitulo"></h2>
+        <p class="photos__hashtag" data-hashtag></p>
+        <p class="photos__text">Usalo en tus historias y publicaciones para que juntemos todas las fotos.</p>
+        <div class="photos__actions">
+          <button type="button" class="btn btn--ghost" data-copy-hashtag>
+            <svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>Copiar hashtag</span>
+          </button>
+          <a class="btn btn--ghost" data-photos-link target="_blank" rel="noopener" hidden>
+            <svg class="i" aria-hidden="true"><use href="#i-camera"/></svg><span>Subir fotos</span>
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <div class="marquee-wrap" aria-hidden="true"><div class="marquee" data-marquee="outro"></div></div>
+
+    <!-- ══ Cierre ══ -->
+    <section class="scene finale" id="cierre" aria-labelledby="finale-title">
+      <div class="finale__ball" aria-hidden="true"><canvas data-ball="finale"></canvas></div>
+      <div class="finale__type" data-reveal>
+        <h2 class="finale__phrase" id="finale-title" data-bind="textos.cierre"></h2>
+        <p class="finale__name"><span data-bind="nombre"></span><span class="finale__xv">· Mis 15</span></p>
+        <a class="btn btn--primary btn--xl" href="#confirmar" data-finale-cta>
+          <svg class="i" aria-hidden="true"><use href="#i-check"/></svg>
+          <span>Confirmar asistencia</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p><span data-bind="nombre"></span> · Mis 15 · <span data-bind="fechaCorta"></span></p>
+    <p class="footer__music" data-music-credit hidden></p>
+    <button type="button" class="footer__pending" data-open-pending hidden>
+      <svg class="i" aria-hidden="true"><use href="#i-info"/></svg><span data-pending-count></span>
+    </button>
+  </footer>
+
+  <!-- ══ Dock: controles + acceso a confirmar ══ -->
+  <nav class="dock" aria-label="Controles de la invitación">
+    <div class="dock__controls">
+      <button type="button" class="dock__btn" data-toggle-music aria-pressed="false" hidden>
+        <svg class="i" aria-hidden="true"><use href="#i-music-off"/></svg>
+        <span class="sr-only">Música</span>
+      </button>
+      <button type="button" class="dock__btn" data-toggle-motion aria-pressed="true">
+        <svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg>
+        <span class="sr-only">Efectos visuales</span>
+      </button>
+    </div>
+    <a class="dock__cta btn btn--primary" href="#confirmar" data-dock-cta>
+      <svg class="i" aria-hidden="true"><use href="#i-check"/></svg>
+      <span>Confirmar asistencia</span>
+    </a>
+  </nav>
+
+  <!-- ══ Modales ══ -->
+  <dialog class="modal" id="gift-dialog" aria-labelledby="gift-dialog-title">
+    <div class="modal__inner">
+      <button type="button" class="modal__close" data-close aria-label="Cerrar"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+      <div class="modal__icon mirror-disc" aria-hidden="true"><svg class="i"><use href="#i-gift"/></svg></div>
+      <h2 class="modal__title" id="gift-dialog-title">Datos para un regalo</h2>
+      <p class="modal__text">¡Gracias por tu cariño!</p>
+      <dl class="bank" data-bank></dl>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="calendar-dialog" aria-labelledby="calendar-dialog-title">
+    <div class="modal__inner">
+      <button type="button" class="modal__close" data-close aria-label="Cerrar"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+      <div class="modal__icon mirror-disc" aria-hidden="true"><svg class="i"><use href="#i-calendar-plus"/></svg></div>
+      <h2 class="modal__title" id="calendar-dialog-title">Agendá la fiesta</h2>
+      <p class="modal__text">Elegí tu calendario para no olvidarte.</p>
+      <div class="modal__actions">
+        <a class="btn btn--primary btn--block" data-cal-google target="_blank" rel="noopener">
+          <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg><span>Google Calendar</span>
+        </a>
+        <a class="btn btn--ghost btn--block" data-cal-ics>
+          <svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>iPhone y otros (.ics)</span>
+        </a>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="pending-dialog" aria-labelledby="pending-dialog-title">
+    <div class="modal__inner">
+      <button type="button" class="modal__close" data-close aria-label="Cerrar"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+      <h2 class="modal__title" id="pending-dialog-title">Versión de muestra</h2>
+      <p class="modal__text">Estos datos todavía no están cargados en <code>config/evento.js</code>:</p>
+      <ul class="pending-list" data-pending-list></ul>
+    </div>
+  </dialog>
+
+  <div class="toasts" data-toasts role="status" aria-live="polite"></div>
+  <audio data-audio loop preload="none"></audio>
+
+  <noscript>
+    <div class="noscript">Esta invitación necesita JavaScript activado para mostrar los datos de la fiesta.</div>
+  </noscript>
+</body>
+</html>
