@@ -3,7 +3,7 @@
  * No hace falta editar este archivo: los datos reales van en evento.js.
  * El modo demo se desactiva solo cuando evento.js ya tiene el nombre.
  *
- * Las acciones que llevan a destinos reales (WhatsApp) siguen en modo
+ * Las acciones que llevan a destinos reales (la planilla) siguen en modo
  * muestra: el ejemplo nunca envía mensajes a un número de verdad.
  */
 export default {

@@ -1,14 +1,15 @@
 import { $, $$, icon, escapeHtml, burst } from "../lib/dom.js";
 import { quality } from "../lib/motion.js";
 import { zonedToDate } from "../lib/time.js";
+import { sheetUrl, sendToSheet, newId } from "../lib/sheet.js";
 
-/** Abre WhatsApp dentro del gesto del visitante. Si el navegador bloquea la ventana, navega en la misma. */
-export function openWhatsApp(number, text) {
-  const url = `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
-  const w = window.open(url, "_blank");
-  if (w) { try { w.opener = null; } catch { /* nada */ } }
-  else window.location.href = url;
-  return url;
+const LABEL = "Enviar confirmación";
+
+/** Estado de envío compartido por los formularios (botón deshabilitado mientras viaja). */
+export function setBusy(btn, labelEl, busy, text) {
+  btn.disabled = busy;
+  btn.setAttribute("aria-busy", busy ? "true" : "false");
+  if (text) labelEl.textContent = text;
 }
 
 function buildFloor() {
@@ -37,7 +38,7 @@ function buildFloor() {
   quality.subscribe(make);
 }
 
-/** Confirmación de asistencia: valida, arma el mensaje y abre WhatsApp. */
+/** Confirmación de asistencia: valida y la guarda en la planilla de Google. */
 export function initRsvp(model, { isDemo }) {
   buildFloor();
   const cfg = model.cfg;
@@ -120,16 +121,24 @@ export function initRsvp(model, { isDemo }) {
     return !msg;
   }
 
-  function buildMessage() {
+  function collect() {
     const yes = attending() === "si";
+    return {
+      tipo: "confirmacion",
+      nombre: nameInput.value.trim().replace(/\s+/g, " "),
+      asistencia: yes ? "si" : "no",
+      personas: yes ? (allowGuests ? Number(guests.value) || 1 : 1) : 0,
+      restricciones: yes && conf.pedirRestricciones !== false ? diet.value.trim() : "",
+      web: form.elements.web?.value || "",
+    };
+  }
+  function summary(d) {
     const lines = [
-      `¡Hola! Te paso mi respuesta para los 15 de ${model.name || "la fiesta"} ✨`,
-      "",
-      `• Nombre: ${nameInput.value.trim().replace(/\s+/g, " ")}`,
-      `• Asistencia: ${yes ? "¡Voy a estar!" : "No voy a poder ir"}`,
+      `Nombre: ${d.nombre}`,
+      `Asistencia: ${d.asistencia === "si" ? "¡Voy a estar!" : "No voy a poder ir"}`,
     ];
-    if (yes && allowGuests) lines.push(`• Personas: ${guests.value}`);
-    if (yes && diet.value.trim() && conf.pedirRestricciones !== false) lines.push(`• Restricciones alimentarias: ${diet.value.trim()}`);
+    if (d.asistencia === "si" && allowGuests) lines.push(`Personas: ${d.personas}`);
+    if (d.restricciones) lines.push(`Restricciones alimentarias: ${d.restricciones}`);
     return lines.join("\n");
   }
 
@@ -141,12 +150,17 @@ export function initRsvp(model, { isDemo }) {
     burst(submit);
     resetTimer = setTimeout(() => {
       submit.classList.remove("is-done");
-      submitLabel.textContent = "Abrir WhatsApp para confirmar";
+      submitLabel.textContent = LABEL;
     }, 2600);
   }
 
-  form.addEventListener("submit", (e) => {
+  const url = sheetUrl(cfg);
+  let pendingId = null; // mismo id en los reintentos: la planilla no duplica la fila
+  let lastKey = "";
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (submit.disabled) return;
     const okName = validateName();
     const okAttend = !!attending();
     setError(attendSet, attendErr, okAttend ? "" : "Elegí si venís o no.");
@@ -155,25 +169,44 @@ export function initRsvp(model, { isDemo }) {
       return;
     }
     clamp();
-    const text = buildMessage();
+    const data = collect();
 
-    if (!model.wa || isDemo) {
+    if (!url || isDemo) {
       status.className = "rsvp__status is-sample";
       status.innerHTML = `
         <strong>${icon("info")}Versión de muestra</strong>
-        <span>${isDemo ? "En la vista de ejemplo no se envían mensajes." : "Todavía falta configurar el WhatsApp que recibe las confirmaciones (<code>confirmacion.whatsapp</code>)."} Este es el mensaje que se va a abrir:</span>
-        <pre>${escapeHtml(text)}</pre>`;
-      flashButton("Mensaje preparado");
+        <span>${isDemo ? "En la vista de ejemplo no se guardan respuestas." : "Todavía falta conectar la planilla de Google (<code>planilla.url</code>)."} Esto es lo que se guardaría:</span>
+        <pre>${escapeHtml(summary(data))}</pre>`;
+      flashButton("Respuesta preparada");
       return;
     }
 
-    // Abrir WhatsApp de inmediato (sigue siendo parte del gesto del visitante)
-    const url = openWhatsApp(model.wa, text);
-    status.className = "rsvp__status is-ok";
-    status.innerHTML = `
-      <strong>${icon("check")}Tu mensaje está listo en WhatsApp</strong>
-      <span>Envialo para que tu respuesta quede confirmada. ¿No se abrió WhatsApp? <a href="${escapeHtml(url)}" target="_blank" rel="noopener">Abrir de nuevo</a></span>`;
-    flashButton("¡Listo! Revisá WhatsApp");
+    const key = JSON.stringify(data);
+    if (key !== lastKey || !pendingId) { pendingId = newId(); lastKey = key; }
+    clearTimeout(resetTimer);
+    submit.classList.remove("is-done");
+    setBusy(submit, submitLabel, true, "Enviando…");
+    status.className = "rsvp__status";
+    status.textContent = "";
+
+    const res = await sendToSheet(url, { ...data, id: pendingId });
+    setBusy(submit, submitLabel, false, LABEL);
+
+    if (res.ok) {
+      pendingId = null;
+      lastKey = "";
+      const yes = data.asistencia === "si";
+      status.className = "rsvp__status is-ok";
+      status.innerHTML = `
+        <strong>${icon("check")}${yes ? "¡Listo! Te espero en la pista" : "¡Gracias por avisar!"}</strong>
+        <span>Tu respuesta quedó registrada. Si necesitás cambiar algo, volvé a enviarla.</span>`;
+      flashButton(yes ? "¡Confirmado!" : "Respuesta enviada");
+    } else {
+      status.className = "rsvp__status is-error";
+      status.innerHTML = `
+        <strong>${icon("info")}No se pudo enviar tu respuesta</strong>
+        <span>Revisá tu conexión y tocá “${LABEL}” de nuevo.</span>`;
+    }
   });
 
   syncExtras();

@@ -29,6 +29,22 @@
   color: var(--c-fuchsia-text);
 }
 .intro__sep { color: var(--c-text-3); }
+.intro__listen { /* botón sutil: encender / apagar la música */
+  justify-self: center; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; margin-top: 2px;
+  border: 0; border-radius: 999px; cursor: pointer; background: transparent;
+  font: 600 13px/1 var(--f-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-text-3);
+  transition: color 0.3s, background 0.3s;
+}
+.intro__listen .i { width: 16px; height: 16px; }
+.intro__listen:hover, .intro__listen:focus-visible { color: var(--c-text); background: rgba(255, 255, 255, 0.06); }
+.intro__listen.is-on { color: var(--c-text-2); }
+.intro__eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 13px; }
+.intro__eq i { width: 3px; height: 100%; border-radius: 2px; background: var(--c-fuchsia); transform-origin: bottom; animation: eq 0.9s ease-in-out infinite alternate; }
+.intro__eq i:nth-child(2) { animation-delay: -0.3s; }
+.intro__eq i:nth-child(3) { animation-delay: -0.6s; }
+@keyframes eq { from { transform: scaleY(0.25); } to { transform: scaleY(1); } }
+html[data-motion="off"] .intro__eq i { animation: none; transform: scaleY(0.6); }
+.intro__stage > :nth-child(5) { animation-delay: 0.6s; }
 .intro__actions { display: grid; gap: 12px; width: min(100%, 340px); margin-top: 18px; }
 .intro__stage > * { animation: fade-up 0.9s var(--ease-out) both; }
 .intro__stage > :nth-child(2) { animation-delay: 0.15s; }

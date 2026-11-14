@@ -5,3 +5,11 @@ por ejemplo: "assets/audio/tema.mp3".
 
 Usá solo música con autorización de uso: propia, comprada con licencia o libre de derechos.
 Si no hay archivo, la invitación funciona normalmente sin música.
+
+Dos momentos de la misma canción (en config/evento.js → musica):
+  adelanto: segundo donde arranca lo que suena en la portada (al primer toque).
+  fiesta:   segundo donde arranca al tocar "Entrar a la fiesta" (la parte más fuerte).
+
+Conviene .m4a (AAC) a 128 kbps: pesa la mitad que un mp3 de 256 y suena igual en el celular.
+En Mac:  afconvert -f m4af -d aac -b 128000 original.mp3 tema.m4a
+Los originales pesados van en fuentes/ (no se publica).

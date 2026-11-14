@@ -68,12 +68,12 @@ const LIGHTS = [
 export class DiscoBall {
   /**
    * @param {HTMLCanvasElement} canvas
-   * @param {object} opts rows, lowRows, speed (rad/s), tilt, seed, fps, interactive
+   * @param {object} opts rows, lowRows, speed (rad/s), tilt, seed, fps, chain (false si el cable lo dibuja el CSS)
    */
   constructor(canvas, opts = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
-    this.o = { rows: 30, lowRows: 22, speed: 0.24, tilt: -0.2, seed: 7, fps: 60, lowFps: 30, ...opts };
+    this.o = { rows: 30, lowRows: 22, speed: 0.24, tilt: -0.2, seed: 7, fps: 60, lowFps: 30, chain: true, ...opts };
     this.angle = opts.startAngle ?? 0.7;
     this.time = opts.startTime ?? 3;
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -178,12 +178,14 @@ export class DiscoBall {
 
     // debajo de los espejos: cadena + juntas
     const [under, u] = layer();
-    u.strokeStyle = "rgba(217,212,230,0.9)";
-    u.lineWidth = Math.max(1, s * 0.004);
-    u.beginPath();
-    u.moveTo(cx, 0);
-    u.lineTo(cx, poleY - R * 0.06);
-    u.stroke();
+    if (this.o.chain) {
+      u.strokeStyle = "rgba(217,212,230,0.9)";
+      u.lineWidth = Math.max(1, s * 0.004);
+      u.beginPath();
+      u.moveTo(cx, 0);
+      u.lineTo(cx, poleY - R * 0.06);
+      u.stroke();
+    }
     const grout = u.createRadialGradient(cx - R * 0.3, cy - R * 0.35, 0, cx, cy, R);
     grout.addColorStop(0, "#2a2238");
     grout.addColorStop(1, "#08060d");

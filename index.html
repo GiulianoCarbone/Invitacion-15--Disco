@@ -54,6 +54,7 @@
     <symbol id="i-music-off" viewBox="0 0 24 24"><path d="M9 17.5V9.2M9 5.8l10.5-2.3v8.2"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="M3.5 3.5l17 17"/></symbol>
     <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M10.5 3.5l1.7 5 5 1.7-5 1.7-1.7 5-1.7-5-5-1.7 5-1.7z"/><path d="M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
     <symbol id="i-sparkles-off" viewBox="0 0 24 24"><path d="M10.5 3.5l1.7 5 5 1.7-5 1.7-1.7 5-1.7-5-5-1.7 5-1.7z"/><path d="M3.5 20.5l17-17"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M20.5 3.5 10.8 13.2M20.5 3.5l-6.2 17-3.5-7.3-7.3-3.5z"/></symbol>
     <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.4 7.6L3.5 20.5l1.3-4.4A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M8.5 11.8h.01M12 11.8h.01M15.5 11.8h.01"/></symbol>
     <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6.5 13.5 12 19l5.5-5.5"/></symbol>
     <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.5-2h4.4l1.5 2h1.8A2.5 2.5 0 0 1 20 8.5V17a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
@@ -106,8 +107,7 @@
     <section class="hero" id="inicio" aria-labelledby="hero-name">
       <div class="hero__watermark" aria-hidden="true">15</div>
       <div class="hero__rig" aria-hidden="true">
-        <span class="hero__chain"></span>
-        <div class="hero__ball"><canvas data-ball="hero"></canvas></div>
+        <div class="hero__ball"><span class="hero__chain"></span><canvas data-ball="hero"></canvas></div>
       </div>
       <div class="hero__type">
         <h1 class="hero__name" id="hero-name" tabindex="-1">
@@ -226,11 +226,14 @@
           </div>
         </div>
 
+        <!-- campo trampa para bots: las personas no lo ven -->
+        <div class="hp" aria-hidden="true"><label>Web <input type="text" name="web" tabindex="-1" autocomplete="off"></label></div>
+
         <button type="submit" class="btn btn--primary btn--block btn--xl" data-rsvp-submit>
-          <svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>
-          <span>Abrir WhatsApp para confirmar</span>
+          <svg class="i" aria-hidden="true"><use href="#i-send"/></svg>
+          <span>Enviar confirmación</span>
         </button>
-        <p class="rsvp__note">Se abre WhatsApp con tu mensaje listo. Tu confirmación queda hecha cuando lo envíes.</p>
+        <p class="rsvp__note">Tu respuesta llega directo a la lista de invitados.</p>
         <div class="rsvp__status" data-rsvp-status role="status" aria-live="polite"></div>
       </form>
     </section>
@@ -264,8 +267,9 @@
               </div>
               <p class="field__error" id="song-error" hidden></p>
             </div>
+            <div class="hp" aria-hidden="true"><label>Web <input type="text" name="web" tabindex="-1" autocomplete="off"></label></div>
             <button type="submit" class="btn btn--ghost btn--block" data-song-submit>
-              <svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>
+              <svg class="i" aria-hidden="true"><use href="#i-send"/></svg>
               <span>Sugerir tema</span>
             </button>
             <p class="song__status" data-song-status role="status" aria-live="polite"></p>

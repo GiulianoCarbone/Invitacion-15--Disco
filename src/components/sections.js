@@ -1,8 +1,9 @@
 /** Dress code, regalos, participación, marquees y aviso de datos pendientes. */
 import { $, $$, icon, escapeHtml, setValue, copyText, burst } from "../lib/dom.js";
-import { has, isEmpty, isPlaceholder, waDigits, pendingFields } from "../lib/data.js";
+import { has, isEmpty, isPlaceholder, pendingFields } from "../lib/data.js";
 import { openModal, toast } from "./ui.js";
-import { openWhatsApp } from "./rsvp.js";
+import { setBusy } from "./rsvp.js";
+import { sheetUrl, sendToSheet, newId } from "../lib/sheet.js";
 
 /* ── Dress code ── */
 export function initDress(model) {
@@ -108,8 +109,11 @@ export function initExtras(model, { isDemo }) {
       $("span", btn).textContent = "Sumar mi tema";
       $("use", btn).setAttribute("href", "#i-link");
     }
-    form.addEventListener("submit", (e) => {
+    let pendingId = null; // mismo id en los reintentos: la planilla no duplica la fila
+    let lastTema = "";
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (btn.disabled) return;
       if (c.canal === "link") {
         if (has(c.url) && /^https?:\/\//i.test(c.url)) window.open(c.url, "_blank", "noopener");
         else toast("Falta cargar el link para sugerir temas (versión de muestra).", { type: "info", ms: 3400 });
@@ -125,16 +129,28 @@ export function initExtras(model, { isDemo }) {
       }
       input.removeAttribute("aria-invalid");
       err.hidden = true;
-      const text = `¡Hola! Para los 15 de ${model.name || "la fiesta"} propongo este tema: ${tema} 🎶`;
-      const number = waDigits(c.whatsapp) || model.wa;
-      if (!number || isDemo) {
-        statusEl.innerHTML = `<span class="ph">Versión de muestra</span> Se abriría WhatsApp con: “${escapeHtml(text)}”`;
+      const label = $("span", btn);
+      const url = sheetUrl(cfg);
+      if (!url || isDemo) {
+        statusEl.innerHTML = `<span class="ph">Versión de muestra</span> Se guardaría en la planilla: “${escapeHtml(tema)}”`;
         burst(btn);
         return;
       }
-      openWhatsApp(number, text);
-      statusEl.textContent = "¡Gracias! Enviá el mensaje en WhatsApp para sumar tu tema.";
-      burst(btn);
+      if (tema !== lastTema || !pendingId) { pendingId = newId(); lastTema = tema; }
+      setBusy(btn, label, true, "Enviando…");
+      statusEl.textContent = "";
+      const who = ($("#rsvp-name")?.value || "").trim().replace(/\s+/g, " ");
+      const res = await sendToSheet(url, { tipo: "cancion", tema, nombre: who, id: pendingId, web: form.elements.web?.value || "" });
+      setBusy(btn, label, false, "Sugerir tema");
+      if (res.ok) {
+        pendingId = null;
+        lastTema = "";
+        input.value = "";
+        statusEl.textContent = "¡Gracias! Tu tema ya está en la lista. Podés sugerir otro.";
+        burst(btn);
+      } else {
+        statusEl.textContent = "No se pudo enviar el tema. Revisá tu conexión y probá de nuevo.";
+      }
     });
     input.addEventListener("input", () => { if (input.value.trim().length >= 2) { input.removeAttribute("aria-invalid"); err.hidden = true; } });
   }

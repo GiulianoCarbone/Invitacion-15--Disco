@@ -73,14 +73,17 @@ export default {
     notaColores: "Reservados para la cumpleañera",
   },
 
+  // ── Planilla de Google (confirmaciones y temas sugeridos) ───────────
+  // Las respuestas se guardan en una Google Sheet. Instalación paso a paso
+  // en google/planilla.gs. Pegá acá la URL que termina en /exec.
+  // Si queda vacía, los formularios muestran lo que se guardaría, sin enviar.
+  planilla: {
+    url: "", //                      ej: "https://script.google.com/macros/s/AKfy…/exec"
+  },
+
   // ── Confirmación de asistencia ──────────────────────────────────────
   confirmacion: {
     fechaLimite: "2027-03-01", //    ej: "2027-03-01"
-    // Número que recibe las confirmaciones, solo dígitos:
-    // código de país + código de área + número, sin 0 ni 15.
-    // ej: "5491122334455"
-    // FICTICIO (no asignado): reemplazar por el número real antes de compartir.
-    whatsapp: "5491100000000",
     permiteAcompanantes: true,
     maxAsistentes: 4, //             máximo por confirmación, incluyendo a quien confirma
     pedirRestricciones: true,
@@ -100,20 +103,23 @@ export default {
   // o libre de derechos). Guardala en assets/audio/ y poné la ruta acá.
   // Si queda vacío, la invitación funciona sin música.
   musica: {
-    archivo: "", //                  ej: "assets/audio/tema.mp3"
-    titulo: "",
-    artista: "",
+    archivo: "assets/audio/daddy-cool.m4a", // ej: "assets/audio/tema.mp3"
+    titulo: "Daddy Cool",
+    artista: "Boney M.",
     volumen: 0.55,
+    // Segundo de la canción donde arranca cada momento (se puede usar decimales).
+    // Para ajustarlos, escuchá la canción y anotá el segundo exacto que te guste.
+    adelanto: 11, //                 portada: botón "Encendé la música" o primer toque (0:11)
+    fiesta: 57, //                   al tocar "Entrar a la fiesta": la parte más fuerte (0:57)
   },
 
   // ── Participación ───────────────────────────────────────────────────
   participacion: {
     cancion: {
-      // "whatsapp": arma un mensaje con el tema sugerido.
-      // "link": abre un formulario o una playlist colaborativa.
-      canal: "whatsapp",
-      whatsapp: "", //               si queda vacío usa el de confirmación
-      url: "", //                    para canal "link"
+      // "planilla": el tema se guarda en la pestaña "Canciones" de la planilla.
+      // "link": abre una playlist colaborativa u otro formulario.
+      canal: "planilla",
+      url: "", //                    solo para canal "link"
     },
     fotos: {
       hashtag: "#Valen15Disco", //   ej: "#Valen15Disco"

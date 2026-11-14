@@ -38,6 +38,12 @@ export function waDigits(v) {
   return digits.length >= 10 && digits.length <= 15 ? digits : null;
 }
 
+/** URL de la aplicación web de Apps Script (planilla de respuestas), o null. */
+export function sheetUrl(cfg) {
+  const url = cfg.planilla?.url;
+  return has(url) && /^https:\/\/script\.google(usercontent)?\.com\//i.test(url.trim()) ? url.trim() : null;
+}
+
 export function mapsLink({ mapsUrl, salon, lugar, direccion, ciudad }) {
   if (has(mapsUrl) && /^https?:\/\//i.test(mapsUrl)) return mapsUrl;
   if (!has(direccion)) return null;
@@ -67,7 +73,6 @@ export function buildModel(cfg) {
     timeRange: time ? (endTime ? `De ${time} a ${endTime} h` : `Desde las ${time} h`) : null,
     deadline: deadlineP ? formatDayMonth(deadlineP) : null,
     deadlineP,
-    wa: waDigits(cfg.confirmacion?.whatsapp),
     partyMaps: mapsLink(cfg.fiesta || {}),
     ceremonyMaps: mapsLink(cfg.ceremonia || {}),
   };
@@ -102,7 +107,7 @@ export function pendingFields(cfg) {
   }
   if (s.dressCode) add(isPending(cfg.dressCode?.estilo), "Dress code", "dressCode.estilo");
   add(!parseLocal(cfg.confirmacion?.fechaLimite), "Fecha límite para confirmar", "confirmacion.fechaLimite");
-  add(!waDigits(cfg.confirmacion?.whatsapp), "WhatsApp para confirmaciones", "confirmacion.whatsapp");
+  add(!sheetUrl(cfg), "Planilla de Google para confirmaciones y temas", "planilla.url");
   if (s.regalos) {
     add(isPending(cfg.regalos?.titular), "Titular de la cuenta", "regalos.titular");
     add(isPending(cfg.regalos?.alias) && isPending(cfg.regalos?.cbu), "Alias o CBU/CVU", "regalos.alias");

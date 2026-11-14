@@ -30,6 +30,7 @@
   transform-origin: 50% -40svh;
   animation: sway 9s var(--ease-in-out) infinite alternate;
 }
+/* El cable vive dentro de .hero__ball: se mueve junto con la bola y nunca se corta */
 .hero__chain {
   position: absolute; left: 50%; bottom: 92%;
   width: 1.5px; height: 60svh; margin-left: -0.75px;
@@ -41,6 +42,7 @@
 }
 .hero__ball { position: absolute; inset: 0; transform: translate3d(var(--px, 0), var(--py, 0), 0); transition: transform 0.6s var(--ease-out); }
 .hero__ball canvas, .intro__ball canvas, .finale__ball canvas { width: 100%; height: 100%; }
+.hero__ball canvas { position: relative; } /* el casquillo tapa el extremo del cable */
 @keyframes sway {
   from { transform: rotate(-1.6deg); }
   to { transform: rotate(1.6deg); }
@@ -190,7 +192,7 @@ html.js .hero:not(.is-played) .name-line__mover { transform: translateY(110%); }
 .hero.is-settled .hero__watermark, .hero.is-settled .name-line__mover, .hero.is-settled .hero__mis,
 .hero.is-settled .hero__fifteen-wrap, .hero.is-settled .hero__date, .hero.is-settled .hero__phrase,
 .hero.is-settled .hero__cue { animation: none; }
-.hero.is-settled .hero__rig { animation: sway 9s var(--ease-in-out) infinite alternate; }
+.hero.is-settled .hero__rig { animation: sway 9s var(--ease-in-out) 1.5s infinite alternate; } /* mismo retardo: el balanceo sigue sin saltar */
 
 @keyframes ball-drop { from { opacity: 0; transform: translateY(-38%) rotate(-5deg); } 60% { opacity: 1; } to { opacity: 1; transform: translateY(0) rotate(-1.6deg); } }
 @keyframes wm-in { from { opacity: 0; transform: translateX(-50%) scale(1.25); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
@@ -490,6 +492,7 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
   -moz-appearance: textfield; appearance: textfield;
 }
 .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .rsvp__note { font-size: 14.5px; line-height: 1.45; color: var(--c-text-3); text-align: center; margin-top: -8px; }
 .rsvp__status:empty { display: none; }
 .rsvp__status {
@@ -498,6 +501,7 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
   font-size: 15.5px; line-height: 1.5;
 }
 .rsvp__status.is-ok { background: rgba(16, 160, 110, 0.12); box-shadow: inset 0 0 0 1px rgba(143, 240, 198, 0.35); }
+.rsvp__status.is-error { background: rgba(255, 45, 149, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 140, 190, 0.45); }
 .rsvp__status.is-sample { background: rgba(139, 61, 255, 0.12); box-shadow: inset 0 0 0 1px rgba(187, 155, 255, 0.45); }
 .rsvp__status strong { display: flex; align-items: center; gap: 8px; font-size: 16.5px; }
 .rsvp__status pre {

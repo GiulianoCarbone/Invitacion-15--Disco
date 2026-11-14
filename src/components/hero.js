@@ -81,7 +81,7 @@ export function initHero(model) {
 
   setValue($("[data-bind=fechaVisible]", hero), model.datePill, { fallback: "[FECHA_VISIBLE]" });
 
-  const ball = new DiscoBall($("canvas[data-ball=hero]"), { rows: 30, lowRows: 22, speed: 0.26, tilt: -0.2, seed: 7 });
+  const ball = new DiscoBall($("canvas[data-ball=hero]"), { rows: 30, lowRows: 22, speed: 0.26, tilt: -0.2, seed: 7, chain: false });
 
   // Profundidad que responde al cursor (solo escritorio)
   if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {

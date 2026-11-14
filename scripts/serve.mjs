@@ -7,6 +7,7 @@
  */
 import http from "node:http";
 import { readFile, stat } from "node:fs/promises";
+import { createReadStream } from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { ROOT, loadConfig, renderIndex, renderICS } from "./page.mjs";
@@ -47,9 +48,27 @@ const server = http.createServer(async (req, res) => {
     const info = await stat(file);
     if (!info.isFile()) throw new Error("no es archivo");
     const type = TYPES[path.extname(file).toLowerCase()] || "application/octet-stream";
-    const headers = { "Content-Type": type, "Cache-Control": "no-store" };
+    const headers = { "Content-Type": type, "Cache-Control": "no-store", "Accept-Ranges": "bytes" };
     if (type.startsWith("text/calendar")) headers["Content-Disposition"] = 'attachment; filename="mis15.ics"';
-    res.writeHead(200, headers);
+
+    // Pedidos por rango: Safari los exige para reproducir audio y todos los navegadores
+    // los usan para saltar a un punto de la canción.
+    const size = info.size;
+    const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || "");
+    if (m && (m[1] || m[2])) {
+      let start, end;
+      if (m[1]) { start = Number(m[1]); end = m[2] ? Math.min(Number(m[2]), size - 1) : size - 1; }
+      else { start = Math.max(0, size - Number(m[2])); end = size - 1; }
+      if (start >= size || start > end) {
+        res.writeHead(416, { "Content-Range": `bytes */${size}` });
+        return res.end();
+      }
+      res.writeHead(206, { ...headers, "Content-Range": `bytes ${start}-${end}/${size}`, "Content-Length": end - start + 1 });
+      if (req.method === "HEAD") return res.end();
+      return createReadStream(file, { start, end }).pipe(res);
+    }
+
+    res.writeHead(200, { ...headers, "Content-Length": size });
     if (req.method === "HEAD") return res.end();
     res.end(await readFile(file));
   } catch {
