@@ -19,7 +19,10 @@ function writePref(v) {
   } catch { /* modo privado: no pasa nada */ }
 }
 
-let pref = readPref(); // "on" | "off" | null
+// Ya no hay botón para pausar los efectos: se descarta cualquier preferencia vieja
+// guardada y manda solo el sistema ("reducir movimiento").
+let pref = null; // "on" | "off" | null
+if (readPref()) writePref(null);
 const motionListeners = new Set();
 
 export const motion = {

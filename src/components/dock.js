@@ -1,16 +1,15 @@
 import { $ } from "../lib/dom.js";
-import { motion } from "../lib/motion.js";
 import { toast } from "./ui.js";
 
 /**
- * Dock inferior: música y efectos (controles separados) + acceso persistente
+ * Dock inferior: botón de música + acceso persistente
  * a "Confirmar asistencia". El acceso se esconde en el hero, en la sección de
  * confirmación, en el cierre y mientras se escribe en un campo.
  */
 export function initDock({ audio }) {
   const dock = $(".dock");
   const musicBtn = $("[data-toggle-music]", dock);
-  const motionBtn = $("[data-toggle-motion]", dock);
+  const controls = $(".dock__controls", dock);
   const cta = $("[data-dock-cta]", dock);
 
   const setBtn = (btn, pressed, iconId, label) => {
@@ -23,6 +22,7 @@ export function initDock({ audio }) {
   // Música
   const syncMusic = () => {
     musicBtn.hidden = !audio.available;
+    controls.hidden = !audio.available; // sin música no queda ningún control
     const on = audio.playing;
     musicBtn.classList.toggle("is-playing", on);
     setBtn(musicBtn, on, on ? "#i-music" : "#i-music-off", on ? "Pausar música" : "Activar música");
@@ -34,18 +34,6 @@ export function initDock({ audio }) {
   });
   musicBtn.addEventListener("click", () => audio.toggle());
   syncMusic();
-
-  // Efectos
-  const syncMotion = () => {
-    const on = motion.enabled;
-    setBtn(motionBtn, on, on ? "#i-sparkles" : "#i-sparkles-off", on ? "Pausar efectos" : "Activar efectos");
-  };
-  motionBtn.addEventListener("click", () => {
-    motion.toggle();
-    toast(motion.enabled ? "Efectos activados" : "Efectos en pausa", { type: "info", ms: 1800 });
-  });
-  motion.subscribe(syncMotion);
-  syncMotion();
 
   // Acceso a confirmar
   const state = { hero: true, rsvp: false, finale: false };

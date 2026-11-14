@@ -80,4 +80,4 @@ assets/                 fuentes (self-hosted), íconos, imagen para compartir
 scripts/                servidor local, build, plantilla de la imagen para compartir
 ```
 
-**Movimiento.** La ambientación anima solo `transform` y `opacity`. Se pausa fuera de pantalla y con la pestaña oculta, y baja la calidad sola en equipos modestos. Respeta "reducir movimiento" del sistema. El botón ✦ del dock pausa los efectos y el de ♫ controla la música por separado.
+**Movimiento.** La ambientación anima solo `transform` y `opacity`. Se pausa fuera de pantalla y con la pestaña oculta, y baja la calidad sola en equipos modestos. Respeta "reducir movimiento" del sistema. El botón ♫ del dock controla la música.
