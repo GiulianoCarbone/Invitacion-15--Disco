@@ -6,7 +6,7 @@
     http://localhost:5173/scripts/og.html?icono=180 → ícono cuadrado
     http://localhost:5173/scripts/og.html?foto       → versión con fondo fotográfico
                                                        (scripts/og-fondo.jpg, generado con Magnific)
-  Es genérica (sin nombre), así sigue siendo válida al cargar los datos reales.
+  La versión ?foto toma el nombre y la fecha de config/evento.js: si cambian, volver a capturarla.
 -->
 <html lang="es">
 <head>
@@ -47,8 +47,15 @@
   .og--foto::before { content: ""; position: absolute; inset: 0;
     background: linear-gradient(90deg, rgba(7,4,13,.82) 0%, rgba(7,4,13,.55) 38%, rgba(7,4,13,0) 62%),
                 linear-gradient(0deg, rgba(7,4,13,.45), transparent 35%); }
-  .og--foto .type { top: 64px; }
-  .og--foto .fifteen { font-size: 270px; }
+  .og--foto .type { top: 50%; transform: translateY(-50%); width: 660px; }
+  .og--foto .name { display: inline-block; font: italic 800 132px/1 "Bodoni Moda", serif; letter-spacing: -0.01em; white-space: nowrap; padding: 0 .06em 8px 0;
+    background: var(--chrome); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 26px rgba(255, 45, 149, .45)); }
+  .og--foto .xv { margin-top: 6px; }
+  .og--foto .mis { font-size: 76px; transform: translateY(-14px); }
+  .og--foto .fifteen { font-size: 190px; }
+  .og--foto .phrase { margin-top: 26px; font-size: 44px; }
+  .og--foto .tag { margin-top: 24px; font-size: 18px; }
   /* ícono */
   .icon { width: var(--s); height: var(--s); display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, #3a1062, #0e061a 70%); }
   .icon canvas { width: 92%; height: 92%; }
@@ -66,12 +73,17 @@
     root.innerHTML = `<div class="icon" style="--s:${+size}px"><canvas></canvas></div>`;
     new DiscoBall(root.querySelector("canvas"), { rows: +size < 64 ? 12 : 22, speed: 0, tilt: -0.15, seed: 5, startAngle: 1.1, startTime: 5 });
   } else if (new URLSearchParams(location.search).has("foto")) {
+    // nombre y fecha salen de config/evento.js
+    const [{ default: base }, { buildModel }] = await Promise.all([import("../config/evento.js"), import("../src/lib/data.js")]);
+    const model = buildModel(base);
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
     root.innerHTML = `
       <div class="og og--foto">
         <div class="type">
+          ${model.name ? `<div class="name">${esc(model.name)}</div>` : ""}
           <div class="xv"><span class="mis">mis</span><span class="fifteen">15</span></div>
-          <div class="phrase">Una noche<br>para brillar.</div>
-          <div class="tag">Noche disco · Te espero</div>
+          <div class="phrase">Una noche para brillar.</div>
+          <div class="tag">${model.datePill ? esc(model.datePill) : "Noche disco · Te espero"}</div>
         </div>
       </div>`;
   } else {
@@ -94,7 +106,15 @@
       </div>`;
     new DiscoBall(root.querySelector(".ball canvas"), { rows: 30, speed: 0, tilt: -0.2, seed: 7, startAngle: 0.9, startTime: 6 });
   }
-  document.fonts.ready.then(() => document.body.dataset.ready = "1");
+  document.fonts.ready.then(() => {
+    // nombres largos: se achica la letra hasta que entre sin tocar la bola
+    const name = document.querySelector(".og--foto .name");
+    if (name) {
+      let size = 132;
+      while (name.getBoundingClientRect().width > 640 && size > 70) { size -= 4; name.style.fontSize = `${size}px`; }
+    }
+    document.body.dataset.ready = "1";
+  });
 </script>
 </body>
 </html>
