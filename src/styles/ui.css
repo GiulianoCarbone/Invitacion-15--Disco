@@ -16,8 +16,31 @@
   animation: spin 40s linear infinite;
   pointer-events: none;
 }
+/* Luces propias de la portada (la ambientación general queda tapada por la portada) */
+.intro__fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.intro__beams, .intro__spots, .intro__sparkles { position: absolute; inset: 0; }
+.intro__beams .beam { top: -6vh; }
+.intro__halo {
+  position: absolute; inset: -18%; z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 45, 149, 0.55), rgba(139, 61, 255, 0.32) 50%, transparent 74%);
+  opacity: calc(0.85 * var(--fx));
+  animation: halo-breathe 3.2s var(--ease-in-out) infinite alternate;
+  will-change: transform, opacity;
+}
+html.is-music .intro__halo { animation-duration: 1.6s; }
+@keyframes halo-breathe {
+  from { transform: scale(0.88); opacity: calc(0.55 * var(--fx)); }
+  to { transform: scale(1.06); opacity: calc(0.95 * var(--fx)); }
+}
+/* Cable desde arriba de la pantalla hasta el casquillo (mismo criterio que en el hero) */
+.intro__chain {
+  position: absolute; left: 50%; bottom: 92%;
+  width: 1.5px; height: 100vh; margin-left: -0.75px;
+  background: linear-gradient(0deg, #d9d4e6, rgba(217, 212, 230, 0.4) 60%, rgba(217, 212, 230, 0.12));
+}
+.intro__ball canvas { position: relative; } /* el casquillo tapa el extremo del cable */
 .intro__stage { position: relative; display: grid; justify-items: center; gap: 12px; width: min(100%, 420px); }
-.intro__ball { width: min(62vw, 36svh, 300px); aspect-ratio: 1; margin-bottom: 4px; }
+.intro__ball { position: relative; isolation: isolate; width: min(62vw, 36svh, 300px); aspect-ratio: 1; margin-bottom: 4px; }
 .intro__kicker {
   font-family: var(--f-glam); font-style: italic; font-weight: 600;
   font-size: clamp(30px, 9vw, 48px); line-height: 1.05;

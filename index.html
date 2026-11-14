@@ -81,6 +81,8 @@
       <span class="beam beam--a"></span>
       <span class="beam beam--b"></span>
       <span class="beam beam--c"></span>
+      <span class="beam beam--d"></span>
+      <span class="beam beam--e"></span>
     </div>
     <div class="fx__reflections"></div>
     <div class="fx__sparkles"></div>
@@ -90,8 +92,18 @@
   <!-- ══ Portada de entrada ══ -->
   <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-describedby="intro-kicker" hidden>
     <div class="intro__glow" aria-hidden="true"></div>
+    <div class="intro__fx" aria-hidden="true">
+      <div class="intro__beams">
+        <span class="beam beam--a"></span>
+        <span class="beam beam--b"></span>
+        <span class="beam beam--d"></span>
+        <span class="beam beam--e"></span>
+      </div>
+      <div class="intro__spots"></div>
+      <div class="intro__sparkles"></div>
+    </div>
     <div class="intro__stage">
-      <div class="intro__ball" aria-hidden="true"><canvas data-ball="intro"></canvas></div>
+      <div class="intro__ball" aria-hidden="true"><span class="intro__halo"></span><span class="intro__chain"></span><canvas data-ball="intro"></canvas></div>
       <p class="intro__kicker" id="intro-kicker" data-bind="textos.portada">Una noche para brillar.</p>
       <p class="intro__title" id="intro-title"><span class="intro__name" data-bind="nombre"></span><span class="intro__sep" aria-hidden="true">·</span><span class="intro__xv">Mis 15</span></p>
       <div class="intro__actions" data-intro-actions>

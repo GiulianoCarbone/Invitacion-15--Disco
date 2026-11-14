@@ -2,6 +2,9 @@
    Ambientación continua: capa fija detrás de todo el contenido.
    Solo se animan transform y opacity (compositor).
    ══════════════════════════════════════════════════════════════ */
+/* Intensidad general de las luces: subir o bajar este número (1 = como está) */
+:root { --fx: 1; }
+
 .fx {
   position: fixed; inset: 0; z-index: -1;
   overflow: hidden; pointer-events: none;
@@ -27,14 +30,20 @@
       transparent var(--spread));
   -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.65) 45%, transparent 92%);
   mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.65) 45%, transparent 92%);
-  opacity: var(--o, 0.5);
+  opacity: calc(var(--o, 0.6) * var(--fx));
   animation: beam-sweep var(--dur) var(--ease-in-out) infinite alternate;
   animation-delay: var(--delay);
   will-change: transform;
 }
-.beam--a { --x: 8%;  --spread: 15deg; --beam: rgba(255, 45, 149, 0.30); --dur: 13s; --delay: -4s; --from: -26deg; --to: 14deg; }
-.beam--b { --x: 92%; --spread: 13deg; --beam: rgba(139, 61, 255, 0.34); --dur: 16s; --delay: -9s; --from: 24deg; --to: -16deg; }
-.beam--c { --x: 50%; --spread: 10deg; --beam: rgba(235, 228, 255, 0.16); --dur: 19s; --delay: -2s; --from: -20deg; --to: 20deg; }
+.beam--a { --x: 8%;  --spread: 16deg; --beam: rgba(255, 45, 149, 0.48); --dur: 9s;  --delay: -4s; --from: -32deg; --to: 22deg; }
+.beam--b { --x: 92%; --spread: 14deg; --beam: rgba(139, 61, 255, 0.52); --dur: 11s; --delay: -9s; --from: 32deg; --to: -24deg; }
+.beam--c { --x: 50%; --spread: 10deg; --beam: rgba(235, 228, 255, 0.24); --dur: 14s; --delay: -2s; --from: -28deg; --to: 28deg; }
+.beam--d { --x: 30%; --spread: 9deg;  --beam: rgba(255, 92, 190, 0.40); --dur: 7.5s; --delay: -1s; --from: 26deg; --to: -30deg; }
+.beam--e { --x: 70%; --spread: 9deg;  --beam: rgba(110, 170, 255, 0.30); --dur: 8.5s; --delay: -6s; --from: -26deg; --to: 30deg; }
+/* con la música sonando, las luces se encienden un poco más */
+.fx__beams { transition: opacity 1.2s ease; }
+html.is-music .fx__beams { opacity: 1; }
+html:not(.is-music) .fx__beams { opacity: 0.85; }
 @keyframes beam-sweep {
   from { transform: rotate(var(--from)); }
   to { transform: rotate(var(--to)); }
@@ -55,8 +64,9 @@
   margin: calc(var(--w) * -0.31) 0 0 calc(var(--w) * -0.5);
   border-radius: 50%;
   transform: rotate(var(--tilt));
-  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95), rgba(var(--rgb), 0.55) 45%, rgba(var(--rgb), 0) 100%);
-  opacity: var(--o);
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95), rgba(var(--rgb), 0.6) 45%, rgba(var(--rgb), 0) 100%);
+  box-shadow: 0 0 calc(var(--w) * 0.8) rgba(var(--rgb), 0.35);
+  opacity: calc(var(--o) * var(--fx));
   animation: twinkle var(--tw) ease-in-out infinite alternate;
   animation-delay: var(--twd);
 }
@@ -140,8 +150,12 @@
    data-motion="off" (efectos pausados, movimiento reducido o pestaña oculta):
    todo bucle CSS se congela en su lugar. Los canvas dibujan un cuadro fijo. */
 html[data-motion="off"] .fx *,
+html[data-motion="off"] .intro__fx *,
+html[data-motion="off"] .intro__halo,
+html.is-locked .fx *,
 html[data-motion="off"] .marquee__track,
 html[data-motion="off"] .hero__rig,
+html[data-motion="off"] .hero__rig::before,
 html[data-motion="off"] .btn::after,
 html[data-motion="off"] .vinyl__disc,
 html[data-motion="off"] .mirror-star,
@@ -156,6 +170,8 @@ html[data-motion="off"] .btn::after { opacity: 0; }
 
 /* Menos capas en equipos modestos */
 html[data-quality="low"] .beam--c,
+html[data-quality="low"] .beam--d,
+html[data-quality="low"] .beam--e,
 html[data-quality="low"] .fx__grain { display: none; }
 
 /* La banda inclinada es más ancha que la pantalla: el contenedor la recorta

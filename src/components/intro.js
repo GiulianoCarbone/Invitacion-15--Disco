@@ -1,5 +1,7 @@
 import { $, setValue, icon } from "../lib/dom.js";
 import { DiscoBall } from "./discoBall.js";
+import { buildReflections, buildSparkles } from "./ambient.js";
+import { quality } from "../lib/motion.js";
 
 const KEY = "xv15:entered";
 
@@ -43,7 +45,17 @@ export function initIntro({ model, audio, onEnter }) {
   document.documentElement.classList.add("is-locked");
   blockers.forEach((el) => (el.inert = true));
 
-  const ball = new DiscoBall($("canvas[data-ball=intro]"), { rows: 24, lowRows: 18, speed: 0.4, tilt: -0.12, seed: 3, startAngle: 2.2 });
+  // Luces de la portada: reflejos de la bola que cruzan la pantalla y destellos
+  const small = window.innerWidth < 700;
+  const lights = () => {
+    const low = quality.low;
+    buildReflections($(".intro__spots", intro), low ? 14 : small ? 28 : 42);
+    buildSparkles($(".intro__sparkles", intro), low ? 5 : small ? 10 : 16, low ? 6 : small ? 12 : 20);
+  };
+  lights();
+  quality.subscribe(() => { if (!intro.hidden) lights(); });
+
+  const ball = new DiscoBall($("canvas[data-ball=intro]"), { rows: 24, lowRows: 18, speed: 0.4, tilt: -0.12, seed: 3, startAngle: 2.2, chain: false });
 
   // Botón "Encendé la música" y primer toque en cualquier parte de la portada
   const syncListen = () => {
@@ -83,7 +95,12 @@ export function initIntro({ model, audio, onEnter }) {
     intro.classList.add("is-leaving");
     document.removeEventListener("keydown", onKey);
     onEnter({ withMusic, skipped: false });
-    setTimeout(() => { intro.hidden = true; ball.setSuspended(true); }, 950);
+    setTimeout(() => {
+      intro.hidden = true;
+      ball.setSuspended(true);
+      $(".intro__spots", intro).replaceChildren(); // fuera de pantalla: se liberan sus capas
+      $(".intro__sparkles", intro).replaceChildren();
+    }, 950);
   }
   function onKey(e) { if (e.key === "Escape") enter(false); }
 

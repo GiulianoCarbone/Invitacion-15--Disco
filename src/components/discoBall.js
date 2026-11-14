@@ -59,10 +59,11 @@ function glintSprite() {
 
 /* Luces del salón: dirección desde la que llegan (espacio de cámara: x→der, y↑, z→espectador) */
 const LIGHTS = [
-  { dir: [-0.52, 0.6, 0.6], color: [1, 0.97, 1], power: 1.9, sharp: 110, wob: 0.22, spd: 0.11, ph: 0, key: true },
-  { dir: [0.8, 0.22, 0.56], color: [1, 0.16, 0.56], power: 1.7, sharp: 70, wob: 0.55, spd: 0.19, ph: 1.3 },
-  { dir: [-0.74, -0.34, 0.58], color: [0.55, 0.22, 1], power: 1.6, sharp: 70, wob: 0.5, spd: 0.15, ph: 2.6 },
-  { dir: [0.3, -0.8, 0.52], color: [0.85, 0.82, 1], power: 0.7, sharp: 40, wob: 0.6, spd: 0.23, ph: 4.1 },
+  { dir: [-0.52, 0.6, 0.6], color: [1, 0.97, 1], power: 1.9, sharp: 110, wob: 0.3, spd: 0.16, ph: 0, key: true },
+  { dir: [0.8, 0.22, 0.56], color: [1, 0.16, 0.56], power: 1.9, sharp: 70, wob: 0.75, spd: 0.29, ph: 1.3 },
+  { dir: [-0.74, -0.34, 0.58], color: [0.55, 0.22, 1], power: 1.8, sharp: 70, wob: 0.7, spd: 0.23, ph: 2.6 },
+  { dir: [0.3, -0.8, 0.52], color: [0.85, 0.82, 1], power: 0.8, sharp: 40, wob: 0.8, spd: 0.33, ph: 4.1 },
+  { dir: [0.05, 0.85, 0.5], color: [1, 0.45, 0.8], power: 1.1, sharp: 90, wob: 0.9, spd: 0.41, ph: 5.2 },
 ];
 
 export class DiscoBall {
@@ -363,7 +364,7 @@ export class DiscoBall {
     if (glints.length) {
       glints.sort((a, b) => b.s - a.s);
       const sprite = glintSprite();
-      const max = quality.low ? 4 : 7;
+      const max = quality.low ? 5 : 10;
       g.globalCompositeOperation = "lighter";
       for (let i = 0; i < Math.min(max, glints.length); i++) {
         const q = glints[i];

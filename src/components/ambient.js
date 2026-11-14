@@ -56,6 +56,9 @@ class Aurora {
     if (!motion.running) this.draw();
   }
   draw() {
+    // mientras la portada tapa la pantalla, la aurora no se ve: no se dibuja
+    if (document.documentElement.classList.contains("is-locked") && this.drawn) return;
+    this.drawn = true;
     const { ctx, w, h, t } = this;
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = this.bg;
@@ -86,13 +89,13 @@ class Aurora {
 
 function rand(a, b) { return a + Math.random() * (b - a); }
 
-function buildReflections(root, n) {
-  const palette = ["255,255,255", "255,255,255", "255,130,205", "190,150,255", "255,210,240"];
+export function buildReflections(root, n) {
+  const palette = ["255,255,255", "255,255,255", "255,130,205", "255,90,180", "190,150,255", "160,120,255", "255,210,240", "150,200,255"];
   const frag = document.createDocumentFragment();
   for (let i = 0; i < n; i++) {
     const depth = Math.random(); // 0 lejos → 1 cerca
-    const w = 6 + depth * 18;
-    const dur = 46 - depth * 16 + rand(-3, 3);
+    const w = 7 + depth * 26;
+    const dur = 34 - depth * 14 + rand(-3, 3);
     const orb = document.createElement("span");
     orb.className = "orb";
     orb.style.cssText = [
@@ -102,7 +105,7 @@ function buildReflections(root, n) {
       `--w:${w.toFixed(1)}px`,
       `--tilt:${rand(-14, 14).toFixed(0)}deg`,
       `--rgb:${palette[(Math.random() * palette.length) | 0]}`,
-      `--o:${(0.25 + depth * 0.5).toFixed(2)}`,
+      `--o:${(0.35 + depth * 0.55).toFixed(2)}`,
       `--tw:${rand(2.6, 6).toFixed(2)}s`,
       `--twd:${(-Math.random() * 6).toFixed(2)}s`,
     ].join(";");
@@ -112,7 +115,7 @@ function buildReflections(root, n) {
   root.replaceChildren(frag);
 }
 
-function buildSparkles(root, stars, glitter) {
+export function buildSparkles(root, stars, glitter) {
   const frag = document.createDocumentFragment();
   for (let i = 0; i < stars; i++) {
     const s = document.createElement("span");
@@ -157,8 +160,8 @@ export function initAmbient() {
   const small = window.innerWidth < 700;
   const build = () => {
     const low = quality.low;
-    buildReflections(refl, low ? 14 : small ? 26 : 40);
-    buildSparkles(sparkles, low ? 5 : small ? 9 : 14, low ? 6 : small ? 12 : 20);
+    buildReflections(refl, low ? 16 : small ? 34 : 52);
+    buildSparkles(sparkles, low ? 6 : small ? 13 : 20, low ? 8 : small ? 16 : 26);
   };
   build();
   quality.subscribe(build);

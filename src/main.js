@@ -32,6 +32,7 @@ initModals();
 
 const hero = initHero(model);
 const audio = createAudio(cfg);
+audio.subscribe(() => document.documentElement.classList.toggle("is-music", audio.playing));
 
 initCountdown(model);
 initVenue(model, initCalendar(model, { isDemo }));
