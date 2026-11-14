@@ -22,7 +22,7 @@ function rng(seed) {
 
 /* Destello en forma de estrella: se pre-renderiza una vez */
 let glintCache = null;
-function glintSprite() {
+export function glintSprite() {
   if (glintCache) return glintCache;
   const s = 128;
   const h = s / 2;
@@ -78,6 +78,8 @@ export class DiscoBall {
     this.angle = opts.startAngle ?? 0.7;
     this.time = opts.startTime ?? 3;
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+    this.boost = 1; // multiplicador de giro (modo fiesta), con transición suave
+    this.boostTarget = 1;
     this.onScreen = false;
     this.suspended = false;
     this.size = 0;
@@ -237,6 +239,7 @@ export class DiscoBall {
 
   setPointer(x, y) { this.pointer.tx = x; this.pointer.ty = y; }
   setSuspended(v) { this.suspended = v; this.sync(); }
+  setBoost(k) { this.boostTarget = k; }
 
   sync() {
     const active = this.onScreen && !this.suspended && motion.running;
@@ -245,8 +248,9 @@ export class DiscoBall {
   }
 
   tick(dt) {
-    this.angle = (this.angle + this.o.speed * dt) % TAU;
-    this.time += dt;
+    this.boost += (this.boostTarget - this.boost) * Math.min(1, dt * 1.5);
+    this.angle = (this.angle + this.o.speed * this.boost * dt) % TAU;
+    this.time += dt * (1 + (this.boost - 1) * 0.6);
     const p = this.pointer;
     const k = Math.min(1, dt * 3);
     p.x += (p.tx - p.x) * k;

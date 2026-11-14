@@ -28,7 +28,7 @@ export default {
   },
 
   // ── Cumpleañera ─────────────────────────────────────────────────────
-  nombre: "Valentina",
+  nombre: "Montserrat",
 
   // ── Fecha y horario ─────────────────────────────────────────────────
   fecha: {
@@ -122,7 +122,7 @@ export default {
       url: "", //                    solo para canal "link"
     },
     fotos: {
-      hashtag: "#Valen15Disco", //   ej: "#Valen15Disco"
+      hashtag: "#Montse15Disco", //  ej: "#Valen15Disco"
       url: "", //                    opcional: álbum compartido para subir fotos
     },
   },

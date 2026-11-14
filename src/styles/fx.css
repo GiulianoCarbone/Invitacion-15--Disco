@@ -160,7 +160,6 @@ html[data-motion="off"] .btn::after,
 html[data-motion="off"] .vinyl__disc,
 html[data-motion="off"] .mirror-star,
 html[data-motion="off"] .floor__tile,
-html[data-motion="off"] .hero__fifteen::after,
 html[data-motion="off"] .name-line__inner::after,
 html[data-motion="off"] .ambient-loop,
 html.is-tab-hidden * {
@@ -180,3 +179,85 @@ html[data-quality="low"] .fx__grain { display: none; }
 
 /* Escenas fuera de pantalla: sus bucles CSS se congelan (los canvas tienen su propio control) */
 .is-offscreen, .is-offscreen *, .is-offscreen *::before, .is-offscreen *::after { animation-play-state: paused !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   Detalles vivos (party.js)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Destellos donde se toca la pantalla */
+.taps, .confetti { position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
+.tap { position: absolute; width: 0; height: 0; }
+.tap__ring {
+  position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 133, 193, 0.8), 0 0 18px rgba(255, 45, 149, 0.6);
+  animation: tap-ring 0.6s var(--ease-out) forwards;
+}
+.tap__star {
+  position: absolute; left: calc(var(--s) / -2); top: calc(var(--s) / -2); width: var(--s); height: var(--s);
+  color: var(--c); animation: tap-star 0.75s var(--ease-out) forwards;
+}
+.tap__star svg { display: block; width: 100%; height: 100%; fill: currentColor; filter: drop-shadow(0 0 4px currentColor); }
+@keyframes tap-ring { from { opacity: 1; transform: scale(0.3); } to { opacity: 0; transform: scale(1.5); } }
+@keyframes tap-star {
+  0% { opacity: 1; transform: translate(0, 0) scale(0.4) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1) rotate(90deg); }
+}
+
+/* Lluvia de brillos */
+.confetti__bit, .confetti__star {
+  position: absolute; top: -24px; width: var(--w); height: calc(var(--w) * 0.45);
+  background: var(--c); border-radius: 2px; opacity: 0;
+  box-shadow: 0 0 6px var(--c);
+  animation: confetti var(--dur) cubic-bezier(.25, .6, .4, 1) var(--d) forwards;
+}
+.confetti__star { height: var(--w); background: none; box-shadow: none; color: var(--c); }
+.confetti__star svg { display: block; width: 100%; height: 100%; fill: currentColor; filter: drop-shadow(0 0 4px currentColor); }
+@keyframes confetti {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+  8% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(var(--dx), 108vh, 0) rotate(var(--r)); }
+}
+
+
+/* Rebote de la bola al tocarla */
+canvas[data-ball].is-tapped { animation: ball-tap 0.35s var(--ease-out); }
+@keyframes ball-tap { 40% { transform: scale(0.96); } 100% { transform: scale(1); } }
+
+/* Modo fiesta: luces de colores que se alternan (suave, nunca un estroboscópico) */
+.fx__party { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; }
+.fx__party::before, .fx__party::after { content: ""; position: absolute; inset: 0; }
+.fx__party::before { background: radial-gradient(70% 55% at 20% 30%, rgba(255, 45, 149, 0.55), transparent 70%); animation: party-a 0.96s ease-in-out infinite alternate; }
+.fx__party::after { background: radial-gradient(70% 55% at 80% 60%, rgba(139, 61, 255, 0.6), transparent 70%); animation: party-a 0.96s ease-in-out -0.48s infinite alternate; }
+@keyframes party-a { from { opacity: 0.15; } to { opacity: 1; } }
+html.is-party .fx__party { opacity: 1; }
+html.is-party .fx__beams { opacity: 1; filter: saturate(1.4) brightness(1.3); }
+html.is-party .fx__reflections { filter: brightness(1.4); }
+
+/* Secciones: un reflector se enciende sobre el título al llegar */
+.scene__head { position: relative; isolation: isolate; }
+.scene__head::before {
+  content: ""; position: absolute; z-index: -1; left: -14%; right: -14%; top: -55%; bottom: -25%;
+  background:
+    radial-gradient(48% 62% at 50% 46%, rgba(255, 45, 149, 0.30), transparent 72%),
+    radial-gradient(70% 80% at 50% 50%, rgba(139, 61, 255, 0.22), transparent 76%);
+  opacity: 0; transform: scaleX(0.6);
+  pointer-events: none;
+}
+.scene__head--center::before { left: -6%; right: -6%; }
+.scene__head.is-in::before { animation: spotlight 2.2s var(--ease-out) forwards; }
+@keyframes spotlight {
+  0% { opacity: 0; transform: scaleX(0.6); }
+  35% { opacity: 1; transform: scaleX(1.05); }
+  100% { opacity: 0.45; transform: scaleX(1); }
+}
+/* …y un brillo cruza el título una vez */
+html.js .scene__head .title {
+  background: linear-gradient(100deg, #fff 0 40%, #ffc6e6 46%, #ffffff 49%, #d9c4ff 52%, #fff 58% 100%);
+  background-size: 300% 100%; background-position: 100% 0;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.scene__head.is-in .title { animation: title-shine 1.8s var(--ease-in-out) 0.35s both; }
+@keyframes title-shine { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+html[data-motion="off"] .scene__head::before { animation: none; opacity: 0.45; transform: none; }
+html[data-motion="off"] .scene__head .title { animation: none; }

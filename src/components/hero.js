@@ -1,6 +1,7 @@
 import { $, setValue } from "../lib/dom.js";
 import { motion } from "../lib/motion.js";
 import { DiscoBall } from "./discoBall.js";
+import { MirrorText } from "./mirrorText.js";
 
 /**
  * Ajusta el nombre al ancho disponible: prueba 1, 2 o 3 líneas y elige la
@@ -80,6 +81,9 @@ export function initHero(model) {
   });
 
   setValue($("[data-bind=fechaVisible]", hero), model.datePill, { fallback: "[FECHA_VISIBLE]" });
+
+  // "15" de espejos: sus cuadritos brillan como la bola
+  try { new MirrorText($(".hero__fifteen", hero)); } catch { /* queda la textura fija */ }
 
   const ball = new DiscoBall($("canvas[data-ball=hero]"), { rows: 30, lowRows: 22, speed: 0.26, tilt: -0.2, seed: 7, chain: false });
 

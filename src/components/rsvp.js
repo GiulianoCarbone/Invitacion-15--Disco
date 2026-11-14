@@ -2,6 +2,7 @@ import { $, $$, icon, escapeHtml, burst } from "../lib/dom.js";
 import { quality } from "../lib/motion.js";
 import { zonedToDate } from "../lib/time.js";
 import { sheetUrl, sendToSheet, newId } from "../lib/sheet.js";
+import { celebrate } from "./party.js";
 
 const LABEL = "Enviar confirmación";
 
@@ -178,6 +179,7 @@ export function initRsvp(model, { isDemo }) {
         <span>${isDemo ? "En la vista de ejemplo no se guardan respuestas." : "Todavía falta conectar la planilla de Google (<code>planilla.url</code>)."} Esto es lo que se guardaría:</span>
         <pre>${escapeHtml(summary(data))}</pre>`;
       flashButton("Respuesta preparada");
+      if (data.asistencia === "si") celebrate(); // en la muestra también, para ver el efecto
       return;
     }
 
@@ -201,6 +203,7 @@ export function initRsvp(model, { isDemo }) {
         <strong>${icon("check")}${yes ? "¡Listo! Te espero en la pista" : "¡Gracias por avisar!"}</strong>
         <span>Tu respuesta quedó registrada. Si necesitás cambiar algo, volvé a enviarla.</span>`;
       flashButton(yes ? "¡Confirmado!" : "Respuesta enviada");
+      if (yes) celebrate();
     } else {
       status.className = "rsvp__status is-error";
       status.innerHTML = `

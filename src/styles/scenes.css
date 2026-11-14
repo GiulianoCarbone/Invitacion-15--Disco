@@ -133,16 +133,9 @@ html.is-music .hero__rig::before { animation-duration: 1.8s; }
   -webkit-text-fill-color: transparent; color: transparent;
   text-shadow: 0 0 0.22em rgba(255, 45, 149, 0.38), 0 0 0.6em rgba(139, 61, 255, 0.32);
 }
-.hero__fifteen::after {
-  content: attr(data-text); position: absolute; inset: 0;
-  padding-right: inherit;
-  background: linear-gradient(100deg, transparent 40%, rgba(255, 255, 255, 0.9) 50%, transparent 60%);
-  background-size: 300% 100%; background-repeat: no-repeat; background-position: 120% 0;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  animation: name-shine 7s var(--ease-in-out) infinite;
-  animation-delay: 3.2s;
-}
+/* Con el canvas de espejos (mirrorText.js) el texto queda solo para la maqueta */
+.hero__fifteen.has-mirror-canvas { background: none; }
+.mirror-text__canvas { position: absolute; display: block; max-width: none; pointer-events: none; } /* sin el max-width general de los canvas: lo aplastaba */
 
 .hero__date { margin-top: clamp(14px, 3.4vw, 26px); }
 .hero__date-pill {
@@ -441,11 +434,12 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
   border-radius: 5px;
   background: var(--tc);
   box-shadow: 0 0 24px var(--tc);
-  opacity: 0.07;
-  animation: floor-wave 8s ease-in-out infinite;
-  animation-delay: var(--d);
+  opacity: 0.2;
+  /* pista siempre encendida: cada baldosa titila un poco después que la anterior */
+  animation: floor-party 0.5s ease-in-out infinite alternate;
+  animation-delay: calc(var(--d) * 0.12);
 }
-@keyframes floor-wave { 0%, 100% { opacity: 0.06; } 50% { opacity: 0.5; } }
+@keyframes floor-party { from { opacity: 0.2; } to { opacity: 0.95; } }
 .rsvp__deadline { display: block; text-align: center; font-weight: 700; font-size: 17px; line-height: 1.6; color: var(--c-text-2); text-wrap: balance; }
 .rsvp__deadline strong { color: #fff; }
 .panel {

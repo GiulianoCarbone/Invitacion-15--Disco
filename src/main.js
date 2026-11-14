@@ -20,6 +20,7 @@ import { initVenue } from "./components/venue.js";
 import { initRsvp } from "./components/rsvp.js";
 import { initDress, initGifts, initExtras, initMarquees } from "./components/sections.js";
 import { initDock } from "./components/dock.js";
+import { initTapSparkles, initPartyMode } from "./components/party.js";
 
 const { cfg, isDemo } = resolveConfig(base, demo, location.search);
 const model = buildModel(cfg);
@@ -41,7 +42,15 @@ initRsvp(model, { isDemo });
 initGifts(model);
 initExtras(model, { isDemo });
 initMarquees(model);
-new DiscoBall($("canvas[data-ball=finale]"), { rows: 26, lowRows: 20, speed: 0.3, tilt: -0.24, seed: 21, startAngle: 4 });
+const finaleBall = new DiscoBall($("canvas[data-ball=finale]"), { rows: 26, lowRows: 20, speed: 0.3, tilt: -0.24, seed: 21, startAngle: 4 });
+initTapSparkles();
+const party = initPartyMode({
+  audio,
+  balls: [
+    { el: $("canvas[data-ball=hero]"), ball: hero.ball },
+    { el: $("canvas[data-ball=finale]"), ball: finaleBall },
+  ],
+});
 initDock({ audio });
 initReveal();
 initOffscreenPause();
@@ -57,7 +66,12 @@ const intro = initIntro({
   onEnter: ({ skipped }) => {
     hero.ball.setSuspended(false);
     setTimeout(() => hero.play(), skipped ? 60 : 380);
-    if (!skipped) $("#hero-name")?.focus({ preventScroll: true });
+    if (!skipped) {
+      $("#hero-name")?.focus({ preventScroll: true });
+      // La invitación arranca en modo fiesta. La música ya la resolvió la portada
+      // (respeta si el invitado la apagó).
+      party.start({ music: false, notice: false });
+    }
   },
 });
 if (intro.open) hero.ball.setSuspended(true);
