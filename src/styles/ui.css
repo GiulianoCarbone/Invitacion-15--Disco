@@ -157,13 +157,6 @@ html[data-motion="off"] .modal.is-closing { animation-direction: reverse; }
 .copy-btn { min-height: 46px; padding: 0 14px; font-size: 14.5px; gap: 7px; }
 .copy-btn .i { width: 18px; height: 18px; }
 
-.pending-list { display: grid; gap: 8px; width: 100%; text-align: left; margin-top: 6px; }
-.pending-list li {
-  display: flex; align-items: center; gap: 10px;
-  padding: 11px 14px; border-radius: 14px; font-size: 15px; font-weight: 600;
-  background: rgba(139, 61, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(187, 155, 255, 0.3);
-}
-.pending-list li code { margin-left: auto; font-size: 12.5px; color: var(--c-violet-text); }
 
 /* ══════════════════════════════════════════════════════════════
    Avisos breves

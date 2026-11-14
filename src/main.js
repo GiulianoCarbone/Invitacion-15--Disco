@@ -18,7 +18,7 @@ import { initCountdown } from "./components/countdown.js";
 import { initCalendar } from "./components/calendar.js";
 import { initVenue } from "./components/venue.js";
 import { initRsvp } from "./components/rsvp.js";
-import { initDress, initGifts, initExtras, initMarquees, initPending } from "./components/sections.js";
+import { initDress, initGifts, initExtras, initMarquees } from "./components/sections.js";
 import { initDock } from "./components/dock.js";
 
 const { cfg, isDemo } = resolveConfig(base, demo, location.search);
@@ -42,7 +42,6 @@ initExtras(model, { isDemo });
 initMarquees(model);
 new DiscoBall($("canvas[data-ball=finale]"), { rows: 26, lowRows: 20, speed: 0.3, tilt: -0.24, seed: 21, startAngle: 4 });
 initDock({ audio });
-initPending(base, { isDemo });
 initReveal();
 initOffscreenPause();
 
@@ -50,11 +49,6 @@ initOffscreenPause();
 const nextScene = $$("main > section").find((s) => !s.classList.contains("hero") && !s.hidden);
 if (nextScene) $("[data-scroll-cue]").href = `#${nextScene.id}`;
 
-if (audio.available && has(cfg.musica?.titulo)) {
-  const credit = $("[data-music-credit]");
-  credit.textContent = `Música: ${cfg.musica.titulo}${has(cfg.musica.artista) ? ` — ${cfg.musica.artista}` : ""}`;
-  credit.hidden = false;
-}
 
 const intro = initIntro({
   model,

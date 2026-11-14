@@ -309,14 +309,6 @@
     </section>
   </main>
 
-  <footer class="footer">
-    <p><span data-bind="nombre"></span> · Mis 15 · <span data-bind="fechaCorta"></span></p>
-    <p class="footer__music" data-music-credit hidden></p>
-    <button type="button" class="footer__pending" data-open-pending hidden>
-      <svg class="i" aria-hidden="true"><use href="#i-info"/></svg><span data-pending-count></span>
-    </button>
-  </footer>
-
   <!-- ══ Dock: controles + acceso a confirmar ══ -->
   <nav class="dock" aria-label="Controles de la invitación">
     <div class="dock__controls">
@@ -363,14 +355,6 @@
     </div>
   </dialog>
 
-  <dialog class="modal" id="pending-dialog" aria-labelledby="pending-dialog-title">
-    <div class="modal__inner">
-      <button type="button" class="modal__close" data-close aria-label="Cerrar"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
-      <h2 class="modal__title" id="pending-dialog-title">Versión de muestra</h2>
-      <p class="modal__text">Estos datos todavía no están cargados en <code>config/evento.js</code>:</p>
-      <ul class="pending-list" data-pending-list></ul>
-    </div>
-  </dialog>
 
   <div class="toasts" data-toasts role="status" aria-live="polite"></div>
   <audio data-audio loop preload="none"></audio>

@@ -18,7 +18,7 @@ function shouldSkip() {
  */
 export function initIntro({ model, audio, onEnter }) {
   const intro = $("#intro");
-  const blockers = [$("#contenido"), $(".footer"), $(".dock")].filter(Boolean);
+  const blockers = [$("#contenido"), $(".dock")].filter(Boolean);
 
   if (shouldSkip()) {
     onEnter({ withMusic: false, skipped: true });

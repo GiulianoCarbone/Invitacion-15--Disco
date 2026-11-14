@@ -621,19 +621,6 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
 }
 .finale__name .ph { font-size: 12px; }
 
-/* ── Footer ── */
-.footer {
-  display: grid; justify-items: center; gap: 8px;
-  padding: 24px var(--gutter) 8px; text-align: center;
-  font-size: 13.5px; color: var(--c-text-3);
-}
-.footer .ph { font-size: 11px; }
-.footer__pending {
-  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px;
-  border: 0; border-radius: 999px; font-size: 13.5px; font-weight: 700;
-  color: var(--c-violet-text); background: rgba(139, 61, 255, 0.14); box-shadow: inset 0 0 0 1px rgba(187, 155, 255, 0.4);
-}
-
 .ticket__day--time { font-size: 46px; letter-spacing: -0.03em; }
 @media (min-width: 760px) { .ticket__day--time { font-size: 58px; } }
 .rsvp__deadline .i { display: inline-block; width: 20px; height: 20px; margin-right: 6px; vertical-align: -4px; color: var(--c-fuchsia-text); }

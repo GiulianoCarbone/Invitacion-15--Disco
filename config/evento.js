@@ -32,8 +32,8 @@ export default {
 
   // ── Fecha y horario ─────────────────────────────────────────────────
   fecha: {
-    inicio: "2027-03-20T21:30", //   ej: "2027-03-20T21:30"
-    fin: "2027-03-21T05:00", //      ej: "2027-03-21T05:00" (opcional)
+    inicio: "2026-12-17T21:30", //   ej: "2027-03-20T21:30"
+    fin: "2026-12-18T05:00", //      ej: "2027-03-21T05:00" (opcional)
     zonaHoraria: "America/Argentina/Buenos_Aires",
     // Opcional: reemplaza la fecha que se arma automáticamente.
     textoVisible: "", //             ej: "Sábado 20 de marzo"
@@ -83,7 +83,7 @@ export default {
 
   // ── Confirmación de asistencia ──────────────────────────────────────
   confirmacion: {
-    fechaLimite: "2027-03-01", //    ej: "2027-03-01"
+    fechaLimite: "2026-12-07", //    ej: "2027-03-01"
     permiteAcompanantes: true,
     maxAsistentes: 4, //             máximo por confirmación, incluyendo a quien confirma
     pedirRestricciones: true,

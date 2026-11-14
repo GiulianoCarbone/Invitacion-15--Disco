@@ -1,6 +1,6 @@
 /** Dress code, regalos, participación, marquees y aviso de datos pendientes. */
 import { $, $$, icon, escapeHtml, setValue, copyText, burst } from "../lib/dom.js";
-import { has, isEmpty, isPlaceholder, pendingFields } from "../lib/data.js";
+import { has, isEmpty, isPlaceholder } from "../lib/data.js";
 import { openModal, toast } from "./ui.js";
 import { setBusy } from "./rsvp.js";
 import { sheetUrl, sendToSheet, newId } from "../lib/sheet.js";
@@ -189,19 +189,3 @@ export function initMarquees(model) {
   }
 }
 
-/* ── Aviso de versión de muestra ── */
-export function initPending(baseCfg, { isDemo }) {
-  const list = pendingFields(baseCfg);
-  const btn = $("[data-open-pending]");
-  if (!list.length && !isDemo) return;
-  btn.hidden = false;
-  $("[data-pending-count]", btn).textContent = isDemo
-    ? "Vista de ejemplo · datos ficticios"
-    : `Versión de muestra · ${list.length} ${list.length === 1 ? "dato pendiente" : "datos pendientes"}`;
-  const dialog = $("#pending-dialog");
-  $("[data-pending-list]", dialog).innerHTML = list.length
-    ? list.map((f) => `<li>${icon("info")}<span>${escapeHtml(f.label)}</span><code>${escapeHtml(f.key)}</code></li>`).join("")
-    : "<li>Todo cargado.</li>";
-  if (isDemo) $(".modal__title", dialog).textContent = "Vista de ejemplo";
-  btn.addEventListener("click", () => openModal(dialog, btn));
-}
