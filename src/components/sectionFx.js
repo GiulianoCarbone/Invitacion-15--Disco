@@ -19,7 +19,8 @@ const EFFECTS = {
   participa: "eq", // ecualizador
   cierre: "lasers", // láseres
 };
-const DURATION = { kaleido: 1500, rings: 1700, warp: 1300, flash: 1500, eq: 1600, lasers: 1900 };
+// ms hasta que termina cada efecto (incluye los retardos escalonados); deben coincidir con fx.css
+const DURATION = { kaleido: 3000, rings: 3000, warp: 3000, flash: 3000, eq: 3000, lasers: 3000 };
 const DWELL = 320; // ms que la sección tiene que quedar en pantalla
 
 const html = document.documentElement;
@@ -34,13 +35,13 @@ function build(kind) {
   el.setAttribute("aria-hidden", "true");
   let inner = "";
   if (kind === "kaleido") inner = "<i></i><i></i><b></b>";
-  if (kind === "rings") for (let i = 0; i < (low ? 4 : 6); i++) inner += `<i style="--k:${i}"></i>`;
+  if (kind === "rings") for (let i = 0; i < (low ? 5 : 7); i++) inner += `<i style="--k:${i}"></i>`;
   if (kind === "warp") inner = "<i></i><i></i><b></b>";
   if (kind === "flash") inner = '<b></b><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="sfx__rec">REC</span>';
   if (kind === "eq") {
     const n = low ? 10 : window.innerWidth < 700 ? 12 : 20;
     for (let i = 0; i < n; i++) {
-      inner += `<i style="--x:${((i + 0.5) / n) * 100}%;--w:${(100 / n) * 0.62}%;--h:${rand(0.35, 0.95).toFixed(2)};--h2:${rand(0.2, 0.7).toFixed(2)};--c:${COLORS[i % 6]};--d:${(Math.abs(i - n / 2) * 30).toFixed(0)}ms"></i>`;
+      inner += `<i style="--x:${((i + 0.5) / n) * 100}%;--w:${(100 / n) * 0.62}%;--h:${rand(0.35, 0.95).toFixed(2)};--h2:${rand(0.2, 0.7).toFixed(2)};--h3:${rand(0.3, 0.9).toFixed(2)};--h4:${rand(0.25, 0.8).toFixed(2)};--c:${COLORS[i % 6]};--d:${Math.min(250, Math.abs(i - n / 2) * 25).toFixed(0)}ms"></i>`;
     }
   }
   if (kind === "lasers") {

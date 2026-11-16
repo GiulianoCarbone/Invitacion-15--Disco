@@ -246,7 +246,7 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
   background: repeating-conic-gradient(from 0deg, rgba(255, 45, 149, 0.5) 0deg 7deg, rgba(80, 210, 255, 0.42) 7deg 14deg, rgba(139, 61, 255, 0.5) 14deg 21deg, transparent 21deg 30deg);
   -webkit-mask-image: radial-gradient(closest-side, transparent 6%, #000 24%, #000 50%, transparent 70%);
   mask-image: radial-gradient(closest-side, transparent 6%, #000 24%, #000 50%, transparent 70%);
-  opacity: 0; animation: kaleido 1.5s var(--ease-out) forwards; will-change: transform, opacity;
+  opacity: 0; animation: kaleido 3s var(--ease-out) forwards; will-change: transform, opacity;
 }
 .sfx--kaleido i + i {
   background: repeating-conic-gradient(from 15deg, rgba(255, 230, 128, 0.38) 0deg 4deg, transparent 4deg 15deg, rgba(158, 240, 255, 0.45) 15deg 19deg, transparent 19deg 30deg);
@@ -255,10 +255,20 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
 .sfx--kaleido b, .sfx--warp b {
   left: 50%; top: 50%; width: 80vmin; height: 80vmin; margin: -40vmin 0 0 -40vmin; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), rgba(255, 120, 200, 0.3) 45%, transparent 75%);
-  opacity: 0; animation: core-pop 0.9s var(--ease-out) forwards;
+  opacity: 0; animation: core-pop 1.7s var(--ease-out) forwards;
 }
-@keyframes kaleido { 0% { opacity: 0; transform: scale(0.25) rotate(-40deg); } 30% { opacity: 0.9; } 100% { opacity: 0; transform: scale(1.25) rotate(50deg); } }
-@keyframes kaleido-rev { 0% { opacity: 0; transform: scale(0.3) rotate(40deg); } 30% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.35) rotate(-60deg); } }
+@keyframes kaleido {
+  0% { opacity: 0; transform: scale(0.25) rotate(-40deg); }
+  15% { opacity: 0.85; transform: scale(0.55) rotate(-8deg); }
+  60% { opacity: 0.5; transform: scale(0.95) rotate(28deg); }
+  100% { opacity: 0; transform: scale(1.3) rotate(65deg); }
+}
+@keyframes kaleido-rev {
+  0% { opacity: 0; transform: scale(0.3) rotate(40deg); }
+  15% { opacity: 0.75; transform: scale(0.6) rotate(10deg); }
+  60% { opacity: 0.45; transform: scale(1) rotate(-30deg); }
+  100% { opacity: 0; transform: scale(1.4) rotate(-75deg); }
+}
 @keyframes core-pop { 0% { opacity: 0; transform: scale(0.2); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.6); } }
 
 /* 2 · Túnel de anillos de neón (dirección) */
@@ -266,11 +276,11 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
   left: 50%; top: 50%; width: 40vmin; height: 40vmin; margin: -20vmin 0 0 -20vmin; border-radius: 50%;
   box-shadow: 0 0 0 3px rgba(120, 225, 255, 0.95), 0 0 26px 6px rgba(80, 200, 255, 0.55), inset 0 0 22px 4px rgba(255, 90, 180, 0.5);
   opacity: 0; transform: scale(0.05);
-  animation: ring 1.3s cubic-bezier(0.2, 0.6, 0.3, 1) forwards; animation-delay: calc(var(--k) * 85ms);
+  animation: ring 1.9s cubic-bezier(0.2, 0.6, 0.3, 1) forwards; animation-delay: calc(var(--k) * 180ms);
   will-change: transform, opacity;
 }
 .sfx--rings i:nth-child(even) { box-shadow: 0 0 0 3px rgba(255, 120, 200, 0.95), 0 0 26px 6px rgba(255, 45, 149, 0.5), inset 0 0 22px 4px rgba(120, 225, 255, 0.45); }
-@keyframes ring { 0% { opacity: 0; transform: scale(0.05); } 15% { opacity: 1; } 100% { opacity: 0; transform: scale(5); } }
+@keyframes ring { 0% { opacity: 0; transform: scale(0.05); } 12% { opacity: 1; } 100% { opacity: 0; transform: scale(5); } }
 
 /* 3 · Velocidad luz (confirmación) */
 .sfx--warp i {
@@ -278,9 +288,9 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
   background: repeating-conic-gradient(from 0deg, transparent 0deg 2.6deg, rgba(190, 240, 255, 0.85) 2.6deg 3deg, transparent 3deg 5.3deg, rgba(255, 140, 210, 0.7) 5.3deg 5.6deg);
   -webkit-mask-image: radial-gradient(closest-side, transparent 16%, #000 36%, #000 66%, transparent 100%);
   mask-image: radial-gradient(closest-side, transparent 16%, #000 36%, #000 66%, transparent 100%);
-  opacity: 0; animation: warp 1.2s cubic-bezier(0.5, 0, 0.75, 0) forwards; will-change: transform, opacity;
+  opacity: 0; animation: warp 1.38s cubic-bezier(0.5, 0, 0.75, 0) 2 forwards; will-change: transform, opacity;
 }
-.sfx--warp i + i { transform: rotate(1.4deg); animation-name: warp-b; animation-delay: 0.12s; }
+.sfx--warp i + i { transform: rotate(1.4deg); animation-name: warp-b; animation-delay: 0.22s; }
 @keyframes warp { 0% { opacity: 0; transform: scale(0.35); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(2.4); } }
 @keyframes warp-b { 0% { opacity: 0; transform: rotate(1.4deg) scale(0.35); } 25% { opacity: 0.8; } 100% { opacity: 0; transform: rotate(1.4deg) scale(2.6); } }
 
@@ -294,7 +304,7 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
 .sfx--flash i {
   width: 46px; height: 46px; border: 3px solid rgba(255, 255, 255, 0.92);
   box-shadow: 0 0 14px rgba(255, 133, 193, 0.55);
-  opacity: 0; animation: corner 1.45s var(--ease-out) forwards;
+  opacity: 0; animation: corner 3s var(--ease-out) forwards;
 }
 .sfx--flash .tl { left: 7%; top: 13%; border-right: 0; border-bottom: 0; --cx: -36px; --cy: -36px; }
 .sfx--flash .tr { right: 7%; top: 13%; border-left: 0; border-bottom: 0; --cx: 36px; --cy: -36px; }
@@ -302,16 +312,17 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
 .sfx--flash .br { right: 7%; bottom: 18%; border-left: 0; border-top: 0; --cx: 36px; --cy: 36px; }
 @keyframes corner {
   0% { opacity: 0; transform: translate(var(--cx), var(--cy)) scale(1.3); }
-  25% { opacity: 1; transform: none; }
-  75% { opacity: 1; transform: none; }
+  14% { opacity: 1; transform: none; }
+  84% { opacity: 1; transform: none; }
   100% { opacity: 0; transform: none; }
 }
 .sfx__rec {
   right: calc(7% + 60px); top: calc(13% + 12px);
   font: 700 13px/1 var(--f-display); letter-spacing: 0.18em; color: #fff;
-  opacity: 0; animation: corner 1.45s var(--ease-out) forwards; --cx: 0px; --cy: -10px;
+  opacity: 0; animation: corner 3s var(--ease-out) forwards; --cx: 0px; --cy: -10px;
 }
-.sfx__rec::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 7px; border-radius: 50%; background: #ff3b5c; box-shadow: 0 0 10px #ff3b5c; vertical-align: 0; }
+.sfx__rec::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 7px; border-radius: 50%; background: #ff3b5c; box-shadow: 0 0 10px #ff3b5c; vertical-align: 0; animation: rec-blink 1s steps(2, jump-none) infinite; }
+@keyframes rec-blink { 0% { opacity: 1; } 100% { opacity: 0.25; } }
 
 /* 5 · Ecualizador (participá) */
 .sfx--eq i {
@@ -320,13 +331,17 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
   background: repeating-linear-gradient(0deg, var(--c) 0 12px, transparent 12px 17px);
   -webkit-mask-image: linear-gradient(0deg, #000 55%, transparent); mask-image: linear-gradient(0deg, #000 55%, transparent);
   opacity: 0.9; transform: scaleY(0);
-  animation: eq-bar 1.5s var(--ease-out) var(--d) forwards; will-change: transform, opacity;
+  animation: eq-bar 2.75s var(--ease-in-out) var(--d) forwards; will-change: transform, opacity;
 }
 @keyframes eq-bar {
   0% { transform: scaleY(0); opacity: 0.95; }
-  25% { transform: scaleY(var(--h)); }
-  45% { transform: scaleY(var(--h2)); }
-  65% { transform: scaleY(calc(var(--h) * 0.8)); opacity: 0.9; }
+  12% { transform: scaleY(var(--h)); }
+  24% { transform: scaleY(var(--h2)); }
+  36% { transform: scaleY(var(--h3)); }
+  48% { transform: scaleY(var(--h)); }
+  60% { transform: scaleY(var(--h4)); }
+  72% { transform: scaleY(var(--h2)); opacity: 0.9; }
+  84% { transform: scaleY(calc(var(--h3) * 0.7)); opacity: 0.8; }
   100% { transform: scaleY(0); opacity: 0; }
 }
 
@@ -335,18 +350,19 @@ html.is-party .fx__reflections { filter: brightness(1.4); }
   left: 50%; bottom: -4vh; width: 3px; height: 130vh; margin-left: -1.5px; transform-origin: 50% 100%;
   background: linear-gradient(0deg, var(--c), transparent 92%);
   box-shadow: 0 0 12px 2px var(--c);
-  opacity: 0; animation: laser 1.8s var(--ease-in-out) var(--d) forwards; will-change: transform, opacity;
+  opacity: 0; animation: laser 2.88s var(--ease-in-out) var(--d) forwards; will-change: transform, opacity;
 }
 @keyframes laser {
   0% { opacity: 0; transform: rotate(var(--a)) scaleY(0.2); }
-  20% { opacity: 0.95; transform: rotate(var(--a)) scaleY(1); }
-  75% { opacity: 0.85; transform: rotate(var(--a2)) scaleY(1); }
+  10% { opacity: 0.95; transform: rotate(var(--a)) scaleY(1); }
+  40% { opacity: 0.9; transform: rotate(var(--a2)) scaleY(1); }
+  70% { opacity: 0.9; transform: rotate(var(--a)) scaleY(1); }
   100% { opacity: 0; transform: rotate(var(--a2)) scaleY(1); }
 }
 .sfx--lasers b {
   left: 50%; bottom: -26vh; width: 64vh; height: 64vh; margin-left: -32vh; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 255, 255, 0.55), rgba(80, 210, 255, 0.35) 35%, rgba(255, 45, 149, 0.2) 60%, transparent 75%);
-  opacity: 0; animation: core-pop 1.6s var(--ease-out) forwards;
+  opacity: 0; animation: core-pop 3s var(--ease-out) forwards;
 }
 
 /* Cada sección entra a su manera (acompaña a su efecto) */
