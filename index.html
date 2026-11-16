@@ -92,19 +92,19 @@
 
   <!-- ══ Portada de entrada ══ -->
   <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-describedby="intro-kicker" hidden>
-    <div class="intro__glow" aria-hidden="true"></div>
-    <div class="intro__fx" aria-hidden="true">
-      <div class="intro__beams">
-        <span class="beam beam--a"></span>
-        <span class="beam beam--b"></span>
-        <span class="beam beam--d"></span>
-        <span class="beam beam--e"></span>
-      </div>
-      <div class="intro__spots"></div>
-      <div class="intro__sparkles"></div>
+    <!-- Escena de la bola: pista de baile en perspectiva + brillitos que salen volando -->
+    <div class="stage" aria-hidden="true">
+      <div class="stage__floor"><div class="stage__plane"></div></div>
+      <canvas class="stage__particles"></canvas>
     </div>
     <div class="intro__stage">
-      <div class="intro__ball" aria-hidden="true"><span class="intro__halo"></span><span class="intro__chain"></span><canvas data-ball="intro"></canvas></div>
+      <div class="intro__ball" aria-hidden="true">
+        <div class="intro__bob">
+          <div class="rays"><canvas class="rays__a"></canvas><canvas class="rays__b"></canvas></div>
+          <span class="intro__chain"></span>
+          <canvas data-ball="intro"></canvas>
+        </div>
+      </div>
       <p class="intro__kicker" id="intro-kicker" data-bind="textos.portada">Una noche para brillar.</p>
       <p class="intro__title" id="intro-title"><span class="intro__name" data-bind="nombre"></span><span class="intro__sep" aria-hidden="true">·</span><span class="intro__xv">Mis 15</span></p>
       <div class="intro__actions" data-intro-actions>
@@ -120,7 +120,8 @@
     <section class="hero" id="inicio" aria-labelledby="hero-name">
       <div class="hero__watermark" aria-hidden="true">15</div>
       <div class="hero__rig" aria-hidden="true">
-        <div class="hero__ball"><span class="hero__chain"></span><canvas data-ball="hero"></canvas></div>
+        <div class="rays rays--hero"><canvas class="rays__a"></canvas><canvas class="rays__b"></canvas></div>
+        <div class="hero__ball"><div class="hero__bob"><span class="hero__chain"></span><canvas data-ball="hero"></canvas></div></div>
       </div>
       <div class="hero__type">
         <h1 class="hero__name" id="hero-name" tabindex="-1">
@@ -140,33 +141,6 @@
 
     <div class="marquee-wrap" aria-hidden="true"><div class="marquee" data-marquee="intro"></div></div>
 
-    <!-- ══ Cuenta regresiva ══ -->
-    <section class="scene countdown" id="cuenta" aria-labelledby="cuenta-title" data-section="cuentaRegresiva">
-      <header class="scene__head" data-reveal>
-        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>Cuenta regresiva</p>
-        <h2 class="title" id="cuenta-title" data-bind="textos.cuentaTitulo"></h2>
-      </header>
-      <div class="countdown__body" data-reveal>
-        <div class="countdown__grid" data-countdown role="timer" aria-live="off">
-          <div class="cd-cell"><span class="cd-num" data-unit="d">--</span><span class="cd-label" data-label="d">días</span></div>
-          <div class="cd-cell"><span class="cd-num" data-unit="h">--</span><span class="cd-label" data-label="h">horas</span></div>
-          <div class="cd-cell"><span class="cd-num" data-unit="m">--</span><span class="cd-label" data-label="m">minutos</span></div>
-          <div class="cd-cell"><span class="cd-num" data-unit="s">--</span><span class="cd-label" data-label="s">segundos</span></div>
-        </div>
-        <p class="sr-only" data-countdown-sr></p>
-        <div class="countdown__state" data-countdown-state hidden></div>
-      </div>
-    </section>
-
-    <!-- ══ Cuándo y dónde ══ -->
-    <section class="scene venue" id="info" aria-labelledby="info-title">
-      <header class="scene__head" data-reveal>
-        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Cuándo y dónde</p>
-        <h2 class="title" id="info-title" data-bind="textos.lugarTitulo"></h2>
-      </header>
-      <div class="venue__tickets" data-venue></div>
-    </section>
-
     <!-- ══ Dress code ══ -->
     <section class="scene dress" id="dress-code" aria-labelledby="dress-title" data-section="dressCode">
       <div class="dress__word" aria-hidden="true"><span>DRESS</span><span>CODE</span></div>
@@ -183,6 +157,15 @@
           <ul class="swatches" data-swatches></ul>
         </div>
       </div>
+    </section>
+
+    <!-- ══ Cuándo y dónde ══ -->
+    <section class="scene venue" id="info" aria-labelledby="info-title">
+      <header class="scene__head" data-reveal>
+        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Cuándo y dónde</p>
+        <h2 class="title" id="info-title" data-bind="textos.lugarTitulo"></h2>
+      </header>
+      <div class="venue__tickets" data-venue></div>
     </section>
 
     <div class="marquee-wrap" aria-hidden="true"><div class="marquee marquee--alt" data-marquee="rsvp"></div></div>
@@ -314,6 +297,23 @@
       <div class="finale__type" data-reveal>
         <h2 class="finale__phrase" id="finale-title" data-bind="textos.cierre"></h2>
         <p class="finale__name"><span data-bind="nombre"></span><span class="finale__xv">· Mis 15</span></p>
+      </div>
+      <!-- Cuenta regresiva: al final de la invitación -->
+      <div class="finale__countdown" id="cuenta" role="group" aria-labelledby="cuenta-title" data-section="cuentaRegresiva" data-reveal>
+        <p class="eyebrow"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>Cuenta regresiva</p>
+        <p class="finale__cd-title" id="cuenta-title" data-bind="textos.cuentaTitulo"></p>
+        <div class="countdown__body">
+          <div class="countdown__grid" data-countdown role="timer" aria-live="off">
+            <div class="cd-cell"><span class="cd-num" data-unit="d">--</span><span class="cd-label" data-label="d">días</span></div>
+            <div class="cd-cell"><span class="cd-num" data-unit="h">--</span><span class="cd-label" data-label="h">horas</span></div>
+            <div class="cd-cell"><span class="cd-num" data-unit="m">--</span><span class="cd-label" data-label="m">minutos</span></div>
+            <div class="cd-cell"><span class="cd-num" data-unit="s">--</span><span class="cd-label" data-label="s">segundos</span></div>
+          </div>
+          <p class="sr-only" data-countdown-sr></p>
+          <div class="countdown__state" data-countdown-state hidden></div>
+        </div>
+      </div>
+      <div class="finale__actions" data-reveal>
         <a class="btn btn--primary btn--xl" href="#confirmar" data-finale-cta>
           <svg class="i" aria-hidden="true"><use href="#i-check"/></svg>
           <span>Confirmar asistencia</span>

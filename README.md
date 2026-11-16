@@ -44,10 +44,10 @@ El build completa el título, la descripción y la imagen para compartir, y gene
 | Datos de regalo | `regalos` | se ven como pendientes; "Copiar" avisa |
 | Hashtag / álbum de fotos | `participacion.fotos` | el módulo se ve como pendiente |
 | Música | `musica.archivo` + archivo en `assets/audio/` | la invitación funciona sin música |
-| Momentos de la canción | `musica.adelanto`, `musica.fiesta` (segundos) | arranca desde el principio |
+| Segundo donde arranca la canción | `musica.inicio` | arranca desde el principio |
 | Dirección pública | `sitio.url` | WhatsApp no muestra la imagen de vista previa |
 
-**Música en dos momentos.** Los navegadores no dejan sonar nada hasta que el invitado toca la pantalla. Por eso la portada tiene un botón sutil "Encendé la música" (también sirve cualquier toque en la pantalla) que hace sonar el adelanto (`musica.adelanto`). "Entrar a la fiesta" pasa con un fundido a la parte más fuerte (`musica.fiesta`). Si la portada se saltea, el botón ♫ del dock arranca directo en la parte fuerte.
+**Música.** Los navegadores no dejan sonar nada hasta que el invitado toca la pantalla. Por eso la portada tiene un botón sutil "Encendé la música" (también sirve cualquier toque en la pantalla). La canción arranca desde el principio (`musica.inicio`) y sigue de corrido: "Entrar a la fiesta" la enciende si todavía no sonaba, pero nunca la reinicia ni salta. Si la portada se saltea, el botón ♫ del dock la arranca desde el principio.
 
 Usá solo música con autorización de uso. Para ocultar un módulo opcional, ponelo en `false` dentro de `secciones`.
 
@@ -81,3 +81,7 @@ scripts/                servidor local, build, plantilla de la imagen para compa
 ```
 
 **Movimiento.** La ambientación anima solo `transform` y `opacity`. Se pausa fuera de pantalla y con la pestaña oculta, y baja la calidad sola en equipos modestos. Respeta "reducir movimiento" del sistema. El botón ♫ del dock controla la música.
+
+**Orden de la invitación.** Portada → inicio (nombre y bola) → dress code → cuándo y dónde → confirmación → regalos → participá → cierre con la cuenta regresiva (última pantalla).
+
+**Bola y efectos.** La bola de la portada y del inicio sigue la referencia del cliente: estallido de rayos, brillitos que salen volando, pista de baile en perspectiva y, cada pocos segundos, una ola de luz que recorre los espejos (`src/components/stage.js` y las opciones `vivid` y `sweep` de `discoBall.js`). Al entrar a la fiesta la bola gira un poco más rápido unos segundos y salen los láseres desde abajo. Cada sección tiene su propio efecto al llegar, una sola vez (`src/components/sectionFx.js`): caleidoscopio, anillos de neón, velocidad luz, flash de cámara, ecualizador y láseres. Las referencias en video están en `fuentes/referencias/` (no se publican).

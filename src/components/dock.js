@@ -36,9 +36,9 @@ export function initDock({ audio }) {
   syncMusic();
 
   // Acceso a confirmar
-  const state = { hero: true, rsvp: false, finale: false };
+  const state = { hero: true, rsvp: false, finale: false, countdown: false };
   const update = () => {
-    const hide = state.hero || state.rsvp || state.finale;
+    const hide = state.hero || state.rsvp || state.finale || state.countdown;
     cta.classList.toggle("is-hidden", hide);
     if (hide) { cta.setAttribute("tabindex", "-1"); cta.setAttribute("aria-hidden", "true"); }
     else { cta.removeAttribute("tabindex"); cta.removeAttribute("aria-hidden"); }
@@ -54,6 +54,8 @@ export function initDock({ audio }) {
     watch($(".hero"), "hero", { threshold: [0, 0.3, 1] }, (e) => e.intersectionRatio > 0.3);
     watch($("#confirmar"), "rsvp", { rootMargin: "-30% 0px -30% 0px" }, (e) => e.isIntersecting);
     watch($("[data-finale-cta]"), "finale", { rootMargin: "0px 0px -10% 0px" }, (e) => e.isIntersecting);
+    // la cuenta regresiva está en el cierre: el botón flotante no la tapa
+    watch($("#cuenta:not([hidden])"), "countdown", { rootMargin: "0px 0px -10% 0px" }, (e) => e.isIntersecting);
   }
 
   // Mientras se escribe (teclado abierto), el dock se corre

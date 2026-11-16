@@ -1,7 +1,6 @@
 import { $, setValue, icon } from "../lib/dom.js";
 import { DiscoBall } from "./discoBall.js";
-import { buildReflections, buildSparkles } from "./ambient.js";
-import { quality } from "../lib/motion.js";
+import { rayBurst, stageFloor, BurstParticles } from "./stage.js";
 
 const KEY = "xv15:entered";
 
@@ -15,7 +14,8 @@ function shouldSkip() {
 /**
  * Portada breve: "Una noche para brillar" + botón para entrar.
  * Con música configurada: el botón "Encendé la música" (o el primer toque en la
- * portada) hace sonar el adelanto y "Entrar a la fiesta" salta a la parte más fuerte.
+ * portada) hace sonar la canción desde el principio; "Entrar a la fiesta" la deja
+ * seguir sin saltar (o la enciende, si todavía no sonaba).
  * El navegador no deja sonar nada antes de ese primer toque.
  */
 export function initIntro({ model, audio, onEnter }) {
@@ -45,17 +45,25 @@ export function initIntro({ model, audio, onEnter }) {
   document.documentElement.classList.add("is-locked");
   blockers.forEach((el) => (el.inert = true));
 
-  // Luces de la portada: reflejos de la bola que cruzan la pantalla y destellos
-  const small = window.innerWidth < 700;
-  const lights = () => {
-    const low = quality.low;
-    buildReflections($(".intro__spots", intro), low ? 14 : small ? 28 : 42);
-    buildSparkles($(".intro__sparkles", intro), low ? 5 : small ? 10 : 16, low ? 6 : small ? 12 : 20);
-  };
-  lights();
-  quality.subscribe(() => { if (!intro.hidden) lights(); });
+  // Escena de la bola (referencia del cliente): rayos, pista de baile y brillitos
+  rayBurst($(".rays__a", intro), { seed: 11, count: 110 });
+  rayBurst($(".rays__b", intro), { seed: 47, count: 46, core: false });
+  stageFloor($(".stage__plane", intro));
+  const ballEl = $(".intro__ball", intro);
+  const particlesEl = $(".stage__particles", intro);
+  const particles = new BurstParticles(particlesEl, {
+    count: 110,
+    origin: () => {
+      const b = ballEl.getBoundingClientRect();
+      const c = particlesEl.getBoundingClientRect();
+      return { x: b.left + b.width / 2 - c.left, y: b.top + b.height / 2 - c.top };
+    },
+  });
 
-  const ball = new DiscoBall($("canvas[data-ball=intro]"), { rows: 24, lowRows: 18, speed: 0.4, tilt: -0.12, seed: 3, startAngle: 2.2, chain: false });
+  const ball = new DiscoBall($("canvas[data-ball=intro]"), {
+    rows: 24, lowRows: 18, speed: 0.5, tilt: -0.12, seed: 3, startAngle: 2.2, chain: false,
+    vivid: true, sweep: true, sweepEvery: 4.6, sweepDelay: 2.2,
+  });
 
   // Botón "Encendé la música" y primer toque en cualquier parte de la portada
   const syncListen = () => {
@@ -74,11 +82,11 @@ export function initIntro({ model, audio, onEnter }) {
       if (done || e.target.closest("[data-enter]")) return;
       if (e.target.closest(".intro__listen")) {
         if (audio.playing && !musicOff) { musicOff = true; audio.pause(); }
-        else { musicOff = false; audio.playPreview(); }
+        else { musicOff = false; audio.start(); }
         syncListen();
         return;
       }
-      if (!musicOff && !audio.playing) audio.playPreview();
+      if (!musicOff && !audio.playing) audio.start();
     });
   }
 
@@ -87,7 +95,7 @@ export function initIntro({ model, audio, onEnter }) {
     if (done) return;
     done = true;
     unsub();
-    if (withMusic) audio.playParty(); // dentro del gesto del visitante
+    if (withMusic) audio.start(); // dentro del gesto del visitante; si ya sonaba, sigue sin saltar
     else audio.pause();
     try { sessionStorage.setItem(KEY, "1"); } catch { /* sin almacenamiento */ }
     document.documentElement.classList.remove("is-locked");
@@ -98,8 +106,7 @@ export function initIntro({ model, audio, onEnter }) {
     setTimeout(() => {
       intro.hidden = true;
       ball.setSuspended(true);
-      $(".intro__spots", intro).replaceChildren(); // fuera de pantalla: se liberan sus capas
-      $(".intro__sparkles", intro).replaceChildren();
+      particles.setSuspended(true);
     }, 950);
   }
   function onKey(e) { if (e.key === "Escape") enter(false); }

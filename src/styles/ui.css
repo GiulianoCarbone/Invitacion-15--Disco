@@ -5,32 +5,63 @@
   position: fixed; inset: 0; z-index: 60;
   display: grid; place-items: center;
   padding: calc(var(--safe-t) + 24px) 24px calc(var(--safe-b) + 24px);
-  background: radial-gradient(120% 80% at 50% 36%, #3a1062 0%, #0e061a 55%, var(--c-bg) 100%) var(--c-bg);
+  background:
+    radial-gradient(70% 45% at 50% 30%, rgba(40, 120, 255, 0.35), transparent 70%),
+    radial-gradient(120% 80% at 50% 36%, #241066 0%, #0b0a2e 55%, var(--c-bg) 100%) var(--c-bg);
   text-align: center;
   overflow: hidden;
   transition: opacity 0.75s var(--ease-out), transform 0.9s var(--ease-out), visibility 0s linear 0.9s;
 }
-.intro__glow {
-  position: absolute; left: 50%; top: 36%; width: 150vmax; height: 150vmax; margin: -75vmax 0 0 -75vmax;
-  background: conic-gradient(from 0deg, transparent 0 10%, rgba(255, 45, 149, 0.16) 14%, transparent 20% 40%, rgba(139, 61, 255, 0.18) 46%, transparent 52% 70%, rgba(255, 255, 255, 0.08) 75%, transparent 80%);
-  animation: spin 40s linear infinite;
+/* ── Escena de la bola (referencia del cliente): rayos, pista y brillitos ── */
+.stage { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.stage__particles { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+/* Pista de baile en perspectiva que avanza hacia la pantalla (solo transform) */
+.stage__floor {
+  position: absolute; left: -70%; right: -70%; bottom: 0; height: 33%;
+  perspective: 340px; perspective-origin: 50% 0%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 26%); mask-image: linear-gradient(180deg, transparent 0%, #000 26%);
+}
+.stage__floor::before { /* línea de luz en el horizonte */
+  content: ""; position: absolute; z-index: 1; left: 0; right: 0; top: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(120, 225, 255, 0.9) 30%, rgba(255, 120, 200, 0.9) 70%, transparent);
+  box-shadow: 0 0 22px 6px rgba(80, 200, 255, 0.45);
+}
+.stage__floor::after { /* baja un poco el brillo de las baldosas: el botón y los textos se leen siempre */
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(11, 10, 46, 0.25) 0%, rgba(7, 4, 13, 0.55) 100%);
+}
+.stage__plane {
+  position: absolute; left: 0; right: 0; top: 0; height: 320%;
+  transform-origin: 50% 0;
+  background: var(--floor-tex, linear-gradient(90deg, #ff6fb5, #5fb6ff)) 0 0 / 240px 240px repeat;
+  transform: rotateX(64deg);
+  animation: floor-run 2.6s linear infinite;
+  will-change: transform;
+}
+@keyframes floor-run {
+  from { transform: rotateX(64deg) translateY(-240px); }
+  to { transform: rotateX(64deg) translateY(0); }
+}
+/* Estallido de rayos detrás de la bola: dos capas que giran en sentidos opuestos y laten */
+.rays {
+  position: absolute; left: 50%; top: 50%; width: 270%; height: 270%; margin: -135% 0 0 -135%;
   pointer-events: none;
+  animation: rays-pulse 1.9s var(--ease-in-out) infinite alternate;
 }
-/* Luces propias de la portada (la ambientación general queda tapada por la portada) */
-.intro__fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.intro__beams, .intro__spots, .intro__sparkles { position: absolute; inset: 0; }
-.intro__beams .beam { top: -6vh; }
-.intro__halo {
-  position: absolute; inset: -18%; z-index: -1; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 45, 149, 0.55), rgba(139, 61, 255, 0.32) 50%, transparent 74%);
-  opacity: calc(0.85 * var(--fx));
-  animation: halo-breathe 3.2s var(--ease-in-out) infinite alternate;
-  will-change: transform, opacity;
+.rays canvas { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; will-change: transform; }
+.rays__a { animation: spin 70s linear infinite; }
+.rays__b { animation: spin-rev 110s linear infinite; opacity: 0.75; }
+@keyframes spin-rev { to { transform: rotate(-360deg); } }
+@keyframes rays-pulse {
+  from { opacity: calc(0.72 * var(--fx)); transform: scale(0.95); }
+  to { opacity: var(--fx); transform: scale(1.04); }
 }
-html.is-music .intro__halo { animation-duration: 1.6s; }
-@keyframes halo-breathe {
-  from { transform: scale(0.88); opacity: calc(0.55 * var(--fx)); }
-  to { transform: scale(1.06); opacity: calc(0.95 * var(--fx)); }
+/* La bola sube, baja y "respira" (el cable va adentro: se mueve junto con ella) */
+.intro__bob, .hero__bob { position: relative; width: 100%; height: 100%; animation: ball-bob 3.2s var(--ease-in-out) infinite alternate; }
+@keyframes ball-bob {
+  from { transform: translateY(-2.5%) scale(0.985); }
+  to { transform: translateY(2.5%) scale(1.025); }
 }
 /* Cable desde arriba de la pantalla hasta el casquillo (mismo criterio que en el hero) */
 .intro__chain {
@@ -38,15 +69,22 @@ html.is-music .intro__halo { animation-duration: 1.6s; }
   width: 1.5px; height: 100vh; margin-left: -0.75px;
   background: linear-gradient(0deg, #d9d4e6, rgba(217, 212, 230, 0.4) 60%, rgba(217, 212, 230, 0.12));
 }
-.intro__ball canvas { position: relative; } /* el casquillo tapa el extremo del cable */
-.intro__stage { position: relative; display: grid; justify-items: center; gap: 12px; width: min(100%, 420px); }
-.intro__ball { position: relative; isolation: isolate; width: min(62vw, 36svh, 300px); aspect-ratio: 1; margin-bottom: 4px; }
+.intro__ball canvas[data-ball] { position: relative; } /* el casquillo tapa el extremo del cable */
+.intro__stage { position: relative; isolation: isolate; display: grid; justify-items: center; gap: 12px; width: min(100%, 420px); }
+/* sombra suave detrás de los textos y botones (la pista de colores queda detrás) */
+.intro__stage::after {
+  content: ""; position: absolute; z-index: -1; left: -30%; right: -30%; top: 50%; bottom: -14%;
+  background: radial-gradient(closest-side, rgba(7, 4, 13, 0.82), rgba(7, 4, 13, 0.55) 55%, rgba(7, 4, 13, 0) 100%);
+  pointer-events: none;
+}
+.intro__ball { position: relative; isolation: isolate; width: min(74vw, 40svh, 380px); aspect-ratio: 1; margin-bottom: 4px; }
 .intro__kicker {
   font-family: var(--f-glam); font-style: italic; font-weight: 600;
   font-size: clamp(30px, 9vw, 48px); line-height: 1.05;
   text-wrap: balance;
 }
 .intro__title {
+  text-shadow: 0 1px 14px rgba(7, 4, 13, 0.9);
   display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.55em;
   font-family: var(--f-display); font-weight: 600; font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
   color: var(--c-fuchsia-text);
@@ -54,12 +92,13 @@ html.is-music .intro__halo { animation-duration: 1.6s; }
 .intro__sep { color: var(--c-text-3); }
 .intro__listen { /* botón sutil: encender / apagar la música */
   justify-self: center; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; margin-top: 2px;
-  border: 0; border-radius: 999px; cursor: pointer; background: transparent;
-  font: 600 13px/1 var(--f-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-text-3);
+  border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(7, 4, 13, 0.6); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  font: 600 13px/1 var(--f-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-text-2);
   transition: color 0.3s, background 0.3s;
 }
 .intro__listen .i { width: 16px; height: 16px; }
-.intro__listen:hover, .intro__listen:focus-visible { color: var(--c-text); background: rgba(255, 255, 255, 0.06); }
+.intro__listen:hover, .intro__listen:focus-visible { color: var(--c-text); background: rgba(30, 16, 60, 0.85); }
 .intro__listen.is-on { color: var(--c-text-2); }
 .intro__eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 13px; }
 .intro__eq i { width: 3px; height: 100%; border-radius: 2px; background: var(--c-fuchsia); transform-origin: bottom; animation: eq 0.9s ease-in-out infinite alternate; }
@@ -74,7 +113,10 @@ html[data-motion="off"] .intro__eq i { animation: none; transform: scaleY(0.6); 
 .intro__stage > :nth-child(3) { animation-delay: 0.3s; }
 .intro__stage > :nth-child(4) { animation-delay: 0.45s; }
 html[data-motion="off"] .intro__stage > * { animation: fade-in 0.4s ease both; }
-html[data-motion="off"] .intro__glow { animation-play-state: paused; }
+html[data-motion="off"] .stage__plane, html[data-motion="off"] .rays, html[data-motion="off"] .rays canvas,
+html[data-motion="off"] .intro__bob, html[data-motion="off"] .hero__bob { animation-play-state: paused; }
+/* mientras la portada tapa la pantalla, la bola del inicio no anima por detrás */
+html.is-locked .rays--hero, html.is-locked .rays--hero canvas, html.is-locked .hero__bob { animation-play-state: paused; }
 .intro.is-leaving { opacity: 0; transform: scale(1.06); visibility: hidden; pointer-events: none; }
 html[data-motion="off"] .intro.is-leaving { transform: none; transition-duration: 0.3s, 0s, 0s; }
 

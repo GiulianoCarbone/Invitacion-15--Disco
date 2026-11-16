@@ -84,14 +84,15 @@ export function initPartyMode({ audio, balls }) {
   const DURATION = 9000;
 
   /**
-   * @param {object} o music: salta a la parte fuerte (solo dentro de un toque del visitante);
-   *                   notice: muestra el aviso "¡Modo fiesta!"
+   * @param {object} o music: enciende la música si no sonaba (solo dentro de un toque del visitante);
+   *                   notice: muestra el aviso "¡Modo fiesta!";
+   *                   boost: cuánto más rápido gira la bola (la sorpresa de los 5 toques gira bien rápido)
    */
-  function start({ music = true, notice = true } = {}) {
+  function start({ music = true, notice = true, boost = 4 } = {}) {
     if (off() || html.classList.contains("is-party")) return;
     html.classList.add("is-party");
-    balls.forEach((b) => b.ball.setBoost(4));
-    if (music && audio.available) audio.playParty(); // el toque es el gesto que habilita el audio
+    balls.forEach((b) => b.ball.setBoost(boost));
+    if (music && audio.available) audio.start(); // el toque habilita el audio; si ya suena, sigue igual
     if (notice) toast("¡Modo fiesta!", { type: "info", ms: 2600 });
     confetti();
     clearTimeout(timer);

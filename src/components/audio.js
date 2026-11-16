@@ -3,10 +3,9 @@ import { has } from "../lib/data.js";
 
 /**
  * Música de fondo. Nunca arranca sola: solo después de una acción del visitante.
- * Dos momentos de la misma canción:
- *   · adelanto  → suena en la portada (musica.adelanto, en segundos)
- *   · fiesta    → la parte más fuerte, al entrar (musica.fiesta, en segundos)
- * Desde ahí sigue la canción y, al terminar, vuelve a empezar.
+ * Arranca desde el principio de la canción (musica.inicio, en segundos) y, una vez
+ * que sonó, nunca vuelve a saltar: entrar, el botón ♫ o el modo fiesta solo la
+ * encienden o la reanudan donde quedó. Al terminar, vuelve a empezar.
  * Si no hay archivo configurado (o no carga) la invitación funciona igual.
  */
 export function createAudio(cfg) {
@@ -15,14 +14,13 @@ export function createAudio(cfg) {
   const src = m.archivo;
   const configured = has(src);
   const target = Math.min(1, Math.max(0, Number(m.volumen ?? 0.55)));
-  const secs = (v, d) => (Number.isFinite(Number(v)) && Number(v) >= 0 ? Number(v) : d);
-  const previewAt = secs(m.adelanto, 0);
-  const partyAt = secs(m.fiesta, previewAt);
+  // "" o null cuentan como "sin dato" (Number("") daría 0 y no el valor por defecto)
+  const secs = (v, d) => (v === "" || v == null || !Number.isFinite(Number(v)) || Number(v) < 0 ? d : Number(v));
+  const startAt0 = secs(m.inicio, 0);
   const listeners = new Set();
   let broken = false;
   let wantPlaying = false;
-  let started = false; // ya sonó alguna vez: "reanudar" no vuelve a saltar
-  let stage = null; // "adelanto" | "fiesta"
+  let started = false; // ya sonó alguna vez: desde ahí solo se reanuda, nunca se salta
   let fadeTimer = 0;
   let op = 0; // invalida saltos/fundidos viejos cuando llega una orden nueva
 
@@ -69,12 +67,11 @@ export function createAudio(cfg) {
   }
 
   /** Arranca en t. Llamar dentro del gesto del visitante. */
-  function startAt(t, name) {
+  function startAt(t) {
     if (!api.available) return Promise.resolve(false);
     const myOp = ++op;
     wantPlaying = true;
     started = true;
-    stage = name;
     clearInterval(fadeTimer);
     el.muted = true;
     const p = el.play(); // play() primero, dentro del gesto; el salto viene después
@@ -88,34 +85,20 @@ export function createAudio(cfg) {
   const api = {
     get available() { return configured && !broken; },
     get playing() { return configured && !el.paused; },
-    get stage() { return stage; },
-
-    /** Portada: el comienzo de la canción. */
-    playPreview() {
-      if (stage === "adelanto" && api.playing) return Promise.resolve(true);
-      return startAt(previewAt, "adelanto");
-    },
-
-    /** Entrar a la fiesta: la parte más fuerte. Si ya sonaba el adelanto, pasa con un fundido corto. */
-    playParty() {
+    /**
+     * Que suene (portada, "Entrar a la fiesta", modo fiesta). Si ya está sonando no hace nada:
+     * nunca reinicia ni salta. Llamar dentro del toque del visitante.
+     */
+    start() {
       if (!api.available) return Promise.resolve(false);
-      if (stage === "fiesta" && api.playing) return Promise.resolve(true);
-      if (!api.playing) return startAt(partyAt, "fiesta");
-      const myOp = ++op;
-      wantPlaying = true;
-      stage = "fiesta";
-      fadeTo(0, 280, () => {
-        if (myOp !== op) return;
-        el.muted = true;
-        seekThenFadeIn(partyAt, myOp);
-      });
-      return Promise.resolve(true);
+      if (api.playing && wantPlaying) return Promise.resolve(true);
+      return api.play();
     },
 
-    /** Botón de música: la primera vez arranca en la parte de la fiesta; después reanuda donde quedó. */
+    /** Botón de música: la primera vez arranca desde el principio; después reanuda donde quedó. */
     play() {
       if (!api.available) return Promise.resolve(false);
-      if (!started) return startAt(partyAt, "fiesta");
+      if (!started) return startAt(startAt0);
       op++;
       wantPlaying = true;
       el.muted = false;

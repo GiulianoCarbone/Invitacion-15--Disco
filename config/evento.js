@@ -107,10 +107,9 @@ export default {
     titulo: "Daddy Cool",
     artista: "Boney M.",
     volumen: 0.55,
-    // Segundo de la canción donde arranca cada momento (se puede usar decimales).
-    // Para ajustarlos, escuchá la canción y anotá el segundo exacto que te guste.
-    adelanto: 11, //                 portada: botón "Encendé la música" o primer toque (0:11)
-    fiesta: 57, //                   al tocar "Entrar a la fiesta": la parte más fuerte (0:57)
+    // Segundo donde arranca la canción (0 = desde el principio). Una vez que
+    // empieza a sonar sigue de corrido: entrar a la fiesta no la reinicia ni salta.
+    inicio: 0,
   },
 
   // ── Participación ───────────────────────────────────────────────────

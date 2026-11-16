@@ -36,14 +36,10 @@
   width: 1.5px; height: 60svh; margin-left: -0.75px;
   background: linear-gradient(0deg, #d9d4e6, rgba(217, 212, 230, 0.35) 60%, rgba(217, 212, 230, 0));
 }
-.hero__rig::before { /* halo detrás de la bola (estático) */
-  content: ""; position: absolute; inset: -6%; z-index: -1; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 45, 149, 0.42), rgba(139, 61, 255, 0.28) 55%, transparent 76%);
-  animation: halo-breathe 3.6s var(--ease-in-out) infinite alternate;
-}
-html.is-music .hero__rig::before { animation-duration: 1.8s; }
+.rays--hero { width: 230%; height: 230%; margin: -115% 0 0 -115%; z-index: -1; }
+.rays--hero canvas { -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%); mask-image: radial-gradient(closest-side, #000 55%, transparent 100%); }
 .hero__ball { position: absolute; inset: 0; transform: translate3d(var(--px, 0), var(--py, 0), 0); transition: transform 0.6s var(--ease-out); }
-.hero__ball canvas, .intro__ball canvas, .finale__ball canvas { width: 100%; height: 100%; }
+.hero__ball canvas, .intro__ball canvas[data-ball], .finale__ball canvas { width: 100%; height: 100%; }
 .hero__ball canvas { position: relative; } /* el casquillo tapa el extremo del cable */
 @keyframes sway {
   from { transform: rotate(-1.6deg); }
@@ -588,7 +584,9 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
   display: grid; justify-items: center; align-content: center;
   min-height: 96svh; text-align: center; overflow: clip;
   padding-top: clamp(40px, 8vw, 80px);
+  padding-bottom: calc(var(--dock-h, 64px) + 40px); /* la cuenta regresiva y el botón quedan al final, sin aire de más */
 }
+.finale__actions { position: relative; z-index: 1; display: grid; justify-items: center; }
 .finale__ball { position: relative; width: min(66vw, 46svh, 400px); aspect-ratio: 1; margin-bottom: calc(min(66vw, 46svh, 400px) * -0.1); }
 .finale__ball::before {
   content: ""; position: absolute; left: 50%; bottom: 90%; width: 1.5px; height: 40vh; margin-left: -0.75px;
@@ -616,6 +614,29 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
   color: var(--c-fuchsia-text);
 }
 .finale__name .ph { font-size: 12px; }
+
+/* Cuenta regresiva dentro del cierre: última pantalla de la invitación */
+.finale__countdown {
+  position: relative; z-index: 1;
+  display: grid; justify-items: center; gap: 12px;
+  width: min(100%, 860px);
+  margin: 0 0 clamp(26px, 5vw, 44px);
+}
+.finale__cd-title {
+  font-family: var(--f-glam); font-style: italic; font-weight: 600;
+  font-size: clamp(22px, 6vw, 34px); line-height: 1.15; text-wrap: balance;
+  color: var(--c-text);
+}
+.finale__countdown .countdown__body { width: 100%; margin-top: 6px; }
+.finale__countdown .cd-cell { justify-items: center; text-align: center; }
+.finale__countdown .cd-cell:nth-child(odd) { padding-right: 0; }
+.finale__countdown .cd-cell:nth-child(even) { padding-left: 0; }
+.finale__countdown .cd-num { font-size: clamp(52px, 15vw, 116px); }
+.finale__countdown .countdown__state { text-align: center; }
+@media (min-width: 760px) {
+  .finale__countdown .cd-cell, .finale__countdown .cd-cell:first-child { padding: 24px 18px 26px; }
+  .finale__countdown .cd-num { font-size: clamp(60px, 7.4vw, 112px); }
+}
 
 .ticket__day--time { font-size: 46px; letter-spacing: -0.03em; }
 @media (min-width: 760px) { .ticket__day--time { font-size: 58px; } }

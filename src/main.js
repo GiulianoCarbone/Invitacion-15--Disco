@@ -21,6 +21,7 @@ import { initRsvp } from "./components/rsvp.js";
 import { initDress, initGifts, initExtras, initMarquees } from "./components/sections.js";
 import { initDock } from "./components/dock.js";
 import { initTapSparkles, initPartyMode } from "./components/party.js";
+import { initSectionFx, playFx } from "./components/sectionFx.js";
 
 const { cfg, isDemo } = resolveConfig(base, demo, location.search);
 const model = buildModel(cfg);
@@ -42,7 +43,7 @@ initRsvp(model, { isDemo });
 initGifts(model);
 initExtras(model, { isDemo });
 initMarquees(model);
-const finaleBall = new DiscoBall($("canvas[data-ball=finale]"), { rows: 26, lowRows: 20, speed: 0.3, tilt: -0.24, seed: 21, startAngle: 4 });
+const finaleBall = new DiscoBall($("canvas[data-ball=finale]"), { rows: 26, lowRows: 20, speed: 0.3, tilt: -0.24, seed: 21, startAngle: 4, vivid: true });
 initTapSparkles();
 const party = initPartyMode({
   audio,
@@ -51,6 +52,7 @@ const party = initPartyMode({
     { el: $("canvas[data-ball=finale]"), ball: finaleBall },
   ],
 });
+initSectionFx();
 initDock({ audio });
 initReveal();
 initOffscreenPause();
@@ -70,7 +72,8 @@ const intro = initIntro({
       $("#hero-name")?.focus({ preventScroll: true });
       // La invitación arranca en modo fiesta. La música ya la resolvió la portada
       // (respeta si el invitado la apagó).
-      party.start({ music: false, notice: false });
+      party.start({ music: false, notice: false, boost: 1.6 }); // gira un poco más rápido, no como la sorpresa
+      setTimeout(() => playFx("lasers"), 420); // las luces que salen de abajo (las mismas del final)
     }
   },
 });

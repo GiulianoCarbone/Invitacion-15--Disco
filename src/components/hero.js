@@ -2,6 +2,7 @@ import { $, setValue } from "../lib/dom.js";
 import { motion } from "../lib/motion.js";
 import { DiscoBall } from "./discoBall.js";
 import { MirrorText } from "./mirrorText.js";
+import { rayBurst } from "./stage.js";
 
 /**
  * Ajusta el nombre al ancho disponible: prueba 1, 2 o 3 líneas y elige la
@@ -85,7 +86,14 @@ export function initHero(model) {
   // "15" de espejos: sus cuadritos brillan como la bola
   try { new MirrorText($(".hero__fifteen", hero)); } catch { /* queda la textura fija */ }
 
-  const ball = new DiscoBall($("canvas[data-ball=hero]"), { rows: 30, lowRows: 22, speed: 0.26, tilt: -0.2, seed: 7, chain: false });
+  // Rayos detrás de la bola (misma escena que la portada)
+  rayBurst($(".rays--hero .rays__a", hero), { seed: 13, count: 100 });
+  rayBurst($(".rays--hero .rays__b", hero), { seed: 53, count: 40, core: false });
+
+  const ball = new DiscoBall($("canvas[data-ball=hero]"), {
+    rows: 30, lowRows: 22, speed: 0.3, tilt: -0.2, seed: 7, chain: false,
+    vivid: true, sweep: true, sweepEvery: 5.4, sweepDelay: 3.4,
+  });
 
   // Profundidad que responde al cursor (solo escritorio)
   if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {

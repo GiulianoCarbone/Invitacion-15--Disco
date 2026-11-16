@@ -150,12 +150,9 @@ html:not(.is-music) .fx__beams { opacity: 0.85; }
    data-motion="off" (efectos pausados, movimiento reducido o pestaña oculta):
    todo bucle CSS se congela en su lugar. Los canvas dibujan un cuadro fijo. */
 html[data-motion="off"] .fx *,
-html[data-motion="off"] .intro__fx *,
-html[data-motion="off"] .intro__halo,
 html.is-locked .fx *,
 html[data-motion="off"] .marquee__track,
 html[data-motion="off"] .hero__rig,
-html[data-motion="off"] .hero__rig::before,
 html[data-motion="off"] .btn::after,
 html[data-motion="off"] .vinyl__disc,
 html[data-motion="off"] .mirror-star,
@@ -234,30 +231,128 @@ html.is-party .fx__party { opacity: 1; }
 html.is-party .fx__beams { opacity: 1; filter: saturate(1.4) brightness(1.3); }
 html.is-party .fx__reflections { filter: brightness(1.4); }
 
-/* Secciones: un reflector se enciende sobre el título al llegar */
-.scene__head { position: relative; isolation: isolate; }
-.scene__head::before {
-  content: ""; position: absolute; z-index: -1; left: -14%; right: -14%; top: -55%; bottom: -25%;
-  background:
-    radial-gradient(48% 62% at 50% 46%, rgba(255, 45, 149, 0.30), transparent 72%),
-    radial-gradient(70% 80% at 50% 50%, rgba(139, 61, 255, 0.22), transparent 76%);
-  opacity: 0; transform: scaleX(0.6);
-  pointer-events: none;
+
+/* ══════════════════════════════════════════════════════════════
+   Un efecto distinto al llegar a cada sección (sectionFx.js)
+   Capa única encima del contenido, sin bloquearlo. Solo transform y opacity.
+   ══════════════════════════════════════════════════════════════ */
+.sfx-layer { position: fixed; inset: 0; z-index: 35; pointer-events: none; overflow: hidden; contain: strict; }
+.sfx { position: absolute; inset: 0; }
+.sfx i, .sfx b, .sfx span { position: absolute; display: block; }
+
+/* 1 · Caleidoscopio (dress code) */
+.sfx--kaleido i {
+  left: 50%; top: 50%; width: 170vmax; height: 170vmax; margin: -85vmax 0 0 -85vmax; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 45, 149, 0.5) 0deg 7deg, rgba(80, 210, 255, 0.42) 7deg 14deg, rgba(139, 61, 255, 0.5) 14deg 21deg, transparent 21deg 30deg);
+  -webkit-mask-image: radial-gradient(closest-side, transparent 6%, #000 24%, #000 50%, transparent 70%);
+  mask-image: radial-gradient(closest-side, transparent 6%, #000 24%, #000 50%, transparent 70%);
+  opacity: 0; animation: kaleido 1.5s var(--ease-out) forwards; will-change: transform, opacity;
 }
-.scene__head--center::before { left: -6%; right: -6%; }
-.scene__head.is-in::before { animation: spotlight 2.2s var(--ease-out) forwards; }
-@keyframes spotlight {
-  0% { opacity: 0; transform: scaleX(0.6); }
-  35% { opacity: 1; transform: scaleX(1.05); }
-  100% { opacity: 0.45; transform: scaleX(1); }
+.sfx--kaleido i + i {
+  background: repeating-conic-gradient(from 15deg, rgba(255, 230, 128, 0.38) 0deg 4deg, transparent 4deg 15deg, rgba(158, 240, 255, 0.45) 15deg 19deg, transparent 19deg 30deg);
+  animation-name: kaleido-rev; animation-delay: 0.08s;
 }
-/* …y un brillo cruza el título una vez */
-html.js .scene__head .title {
-  background: linear-gradient(100deg, #fff 0 40%, #ffc6e6 46%, #ffffff 49%, #d9c4ff 52%, #fff 58% 100%);
-  background-size: 300% 100%; background-position: 100% 0;
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+.sfx--kaleido b, .sfx--warp b {
+  left: 50%; top: 50%; width: 80vmin; height: 80vmin; margin: -40vmin 0 0 -40vmin; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), rgba(255, 120, 200, 0.3) 45%, transparent 75%);
+  opacity: 0; animation: core-pop 0.9s var(--ease-out) forwards;
 }
-.scene__head.is-in .title { animation: title-shine 1.8s var(--ease-in-out) 0.35s both; }
-@keyframes title-shine { from { background-position: 100% 0; } to { background-position: 0% 0; } }
-html[data-motion="off"] .scene__head::before { animation: none; opacity: 0.45; transform: none; }
-html[data-motion="off"] .scene__head .title { animation: none; }
+@keyframes kaleido { 0% { opacity: 0; transform: scale(0.25) rotate(-40deg); } 30% { opacity: 0.9; } 100% { opacity: 0; transform: scale(1.25) rotate(50deg); } }
+@keyframes kaleido-rev { 0% { opacity: 0; transform: scale(0.3) rotate(40deg); } 30% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.35) rotate(-60deg); } }
+@keyframes core-pop { 0% { opacity: 0; transform: scale(0.2); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.6); } }
+
+/* 2 · Túnel de anillos de neón (dirección) */
+.sfx--rings i {
+  left: 50%; top: 50%; width: 40vmin; height: 40vmin; margin: -20vmin 0 0 -20vmin; border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(120, 225, 255, 0.95), 0 0 26px 6px rgba(80, 200, 255, 0.55), inset 0 0 22px 4px rgba(255, 90, 180, 0.5);
+  opacity: 0; transform: scale(0.05);
+  animation: ring 1.3s cubic-bezier(0.2, 0.6, 0.3, 1) forwards; animation-delay: calc(var(--k) * 85ms);
+  will-change: transform, opacity;
+}
+.sfx--rings i:nth-child(even) { box-shadow: 0 0 0 3px rgba(255, 120, 200, 0.95), 0 0 26px 6px rgba(255, 45, 149, 0.5), inset 0 0 22px 4px rgba(120, 225, 255, 0.45); }
+@keyframes ring { 0% { opacity: 0; transform: scale(0.05); } 15% { opacity: 1; } 100% { opacity: 0; transform: scale(5); } }
+
+/* 3 · Velocidad luz (confirmación) */
+.sfx--warp i {
+  left: 50%; top: 50%; width: 150vmax; height: 150vmax; margin: -75vmax 0 0 -75vmax;
+  background: repeating-conic-gradient(from 0deg, transparent 0deg 2.6deg, rgba(190, 240, 255, 0.85) 2.6deg 3deg, transparent 3deg 5.3deg, rgba(255, 140, 210, 0.7) 5.3deg 5.6deg);
+  -webkit-mask-image: radial-gradient(closest-side, transparent 16%, #000 36%, #000 66%, transparent 100%);
+  mask-image: radial-gradient(closest-side, transparent 16%, #000 36%, #000 66%, transparent 100%);
+  opacity: 0; animation: warp 1.2s cubic-bezier(0.5, 0, 0.75, 0) forwards; will-change: transform, opacity;
+}
+.sfx--warp i + i { transform: rotate(1.4deg); animation-name: warp-b; animation-delay: 0.12s; }
+@keyframes warp { 0% { opacity: 0; transform: scale(0.35); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(2.4); } }
+@keyframes warp-b { 0% { opacity: 0; transform: rotate(1.4deg) scale(0.35); } 25% { opacity: 0.8; } 100% { opacity: 0; transform: rotate(1.4deg) scale(2.6); } }
+
+/* 4 · Flash de cámara con visor (regalos): un solo destello suave, nunca estroboscópico */
+.sfx--flash b {
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.7), rgba(255, 220, 240, 0.32) 40%, transparent 75%);
+  opacity: 0; animation: flash 0.6s ease-out forwards;
+}
+@keyframes flash { 0% { opacity: 0; } 18% { opacity: 1; } 100% { opacity: 0; } }
+.sfx--flash i {
+  width: 46px; height: 46px; border: 3px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 14px rgba(255, 133, 193, 0.55);
+  opacity: 0; animation: corner 1.45s var(--ease-out) forwards;
+}
+.sfx--flash .tl { left: 7%; top: 13%; border-right: 0; border-bottom: 0; --cx: -36px; --cy: -36px; }
+.sfx--flash .tr { right: 7%; top: 13%; border-left: 0; border-bottom: 0; --cx: 36px; --cy: -36px; }
+.sfx--flash .bl { left: 7%; bottom: 18%; border-right: 0; border-top: 0; --cx: -36px; --cy: 36px; }
+.sfx--flash .br { right: 7%; bottom: 18%; border-left: 0; border-top: 0; --cx: 36px; --cy: 36px; }
+@keyframes corner {
+  0% { opacity: 0; transform: translate(var(--cx), var(--cy)) scale(1.3); }
+  25% { opacity: 1; transform: none; }
+  75% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: none; }
+}
+.sfx__rec {
+  right: calc(7% + 60px); top: calc(13% + 12px);
+  font: 700 13px/1 var(--f-display); letter-spacing: 0.18em; color: #fff;
+  opacity: 0; animation: corner 1.45s var(--ease-out) forwards; --cx: 0px; --cy: -10px;
+}
+.sfx__rec::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 7px; border-radius: 50%; background: #ff3b5c; box-shadow: 0 0 10px #ff3b5c; vertical-align: 0; }
+
+/* 5 · Ecualizador (participá) */
+.sfx--eq i {
+  bottom: 0; left: var(--x); width: var(--w); margin-left: calc(var(--w) / -2); height: 48vh;
+  transform-origin: 50% 100%;
+  background: repeating-linear-gradient(0deg, var(--c) 0 12px, transparent 12px 17px);
+  -webkit-mask-image: linear-gradient(0deg, #000 55%, transparent); mask-image: linear-gradient(0deg, #000 55%, transparent);
+  opacity: 0.9; transform: scaleY(0);
+  animation: eq-bar 1.5s var(--ease-out) var(--d) forwards; will-change: transform, opacity;
+}
+@keyframes eq-bar {
+  0% { transform: scaleY(0); opacity: 0.95; }
+  25% { transform: scaleY(var(--h)); }
+  45% { transform: scaleY(var(--h2)); }
+  65% { transform: scaleY(calc(var(--h) * 0.8)); opacity: 0.9; }
+  100% { transform: scaleY(0); opacity: 0; }
+}
+
+/* 6 · Láseres (cierre con la cuenta regresiva) */
+.sfx--lasers i {
+  left: 50%; bottom: -4vh; width: 3px; height: 130vh; margin-left: -1.5px; transform-origin: 50% 100%;
+  background: linear-gradient(0deg, var(--c), transparent 92%);
+  box-shadow: 0 0 12px 2px var(--c);
+  opacity: 0; animation: laser 1.8s var(--ease-in-out) var(--d) forwards; will-change: transform, opacity;
+}
+@keyframes laser {
+  0% { opacity: 0; transform: rotate(var(--a)) scaleY(0.2); }
+  20% { opacity: 0.95; transform: rotate(var(--a)) scaleY(1); }
+  75% { opacity: 0.85; transform: rotate(var(--a2)) scaleY(1); }
+  100% { opacity: 0; transform: rotate(var(--a2)) scaleY(1); }
+}
+.sfx--lasers b {
+  left: 50%; bottom: -26vh; width: 64vh; height: 64vh; margin-left: -32vh; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.55), rgba(80, 210, 255, 0.35) 35%, rgba(255, 45, 149, 0.2) 60%, transparent 75%);
+  opacity: 0; animation: core-pop 1.6s var(--ease-out) forwards;
+}
+
+/* Cada sección entra a su manera (acompaña a su efecto) */
+html.js:not(.reveal-off) [data-fx="kaleido"] [data-reveal]:not(.is-in) > * { transform: rotate(-5deg) scale(0.9); }
+html.js:not(.reveal-off) [data-fx="rings"] [data-reveal]:not(.is-in) > * { transform: scale(0.84); }
+html.js:not(.reveal-off) [data-fx="warp"] [data-reveal]:not(.is-in) > * { transform: scale(1.16); }
+html.js:not(.reveal-off) [data-fx="flash"] [data-reveal]:not(.is-in) > * { transform: none; }
+html.js:not(.reveal-off) [data-fx="eq"] [data-reveal]:not(.is-in) > * { transform: translateY(70px); }
+html.js:not(.reveal-off) [data-fx="lasers"] [data-reveal]:not(.is-in) > * { transform: translateY(24px) scale(0.95); }

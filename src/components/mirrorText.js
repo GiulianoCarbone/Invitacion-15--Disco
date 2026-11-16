@@ -38,7 +38,11 @@ export class MirrorText {
     this.ctx = this.canvas.getContext("2d");
     this.onScreen = false;
 
-    this.task = addTask((t, dt) => { this.t += dt; this.draw(); }, { fps: quality.low ? 20 : 30 });
+    this.task = addTask((t, dt) => {
+      if (document.documentElement.classList.contains("is-locked")) return; // tapado por la portada
+      this.t += dt;
+      this.draw();
+    }, { fps: quality.low ? 20 : 30 });
     this.ro = new ResizeObserver(() => this.layout());
     this.ro.observe(el);
     watchVisibility(el, (v) => { this.onScreen = v; this.sync(); });

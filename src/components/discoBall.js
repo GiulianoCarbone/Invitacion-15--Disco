@@ -66,15 +66,29 @@ const LIGHTS = [
   { dir: [0.05, 0.85, 0.5], color: [1, 0.45, 0.8], power: 1.1, sharp: 90, wob: 0.9, spd: 0.41, ph: 5.2 },
 ];
 
+/* Paleta intensa (bola de la portada y del hero): suma luces celestes y espejos de color */
+const LIGHTS_VIVID = [
+  { dir: [-0.52, 0.6, 0.6], color: [1, 0.97, 1], power: 2.0, sharp: 110, wob: 0.3, spd: 0.16, ph: 0, key: true },
+  { dir: [0.8, 0.22, 0.56], color: [1, 0.18, 0.62], power: 2.1, sharp: 64, wob: 0.75, spd: 0.29, ph: 1.3 },
+  { dir: [-0.74, -0.34, 0.58], color: [0.2, 0.82, 1], power: 2.1, sharp: 60, wob: 0.7, spd: 0.23, ph: 2.6 },
+  { dir: [0.3, -0.8, 0.52], color: [0.62, 0.32, 1], power: 1.4, sharp: 44, wob: 0.8, spd: 0.33, ph: 4.1 },
+  { dir: [0.05, 0.85, 0.5], color: [1, 0.5, 0.86], power: 1.3, sharp: 80, wob: 0.9, spd: 0.41, ph: 5.2 },
+  { dir: [-0.2, -0.3, 0.93], color: [0.35, 0.9, 1], power: 1.2, sharp: 70, wob: 1.0, spd: 0.37, ph: 0.7 },
+];
+
 export class DiscoBall {
   /**
    * @param {HTMLCanvasElement} canvas
-   * @param {object} opts rows, lowRows, speed (rad/s), tilt, seed, fps, chain (false si el cable lo dibuja el CSS)
+   * @param {object} opts rows, lowRows, speed (rad/s), tilt, seed, fps, chain (false si el cable lo dibuja el CSS),
+   *   vivid (espejos de color y luces celestes), sweep (cada `sweepEvery` s una ola de luz recorre los espejos)
    */
   constructor(canvas, opts = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
-    this.o = { rows: 30, lowRows: 22, speed: 0.24, tilt: -0.2, seed: 7, fps: 60, lowFps: 30, chain: true, ...opts };
+    this.o = { rows: 30, lowRows: 22, speed: 0.24, tilt: -0.2, seed: 7, fps: 60, lowFps: 30, chain: true, vivid: false, sweep: false, sweepEvery: 5, ...opts };
+    this.lights = this.o.vivid ? LIGHTS_VIVID : LIGHTS;
+    this.sweepClock = this.o.sweepEvery - (opts.sweepDelay ?? 2); // la primera ola llega a los `sweepDelay` s
+    this.sweepPos = null; // avance de la ola de luz (0 → 1), null = sin ola
     this.angle = opts.startAngle ?? 0.7;
     this.time = opts.startTime ?? 3;
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -139,7 +153,9 @@ export class DiscoBall {
         const r = rand();
         const gain = r < 0.04 ? 0.3 : r < 0.1 ? 1.5 : 0.55 + rand() * 0.75;
         const k = rand();
-        const t = k < 0.08 ? [1, 0.82, 0.95] : k < 0.16 ? [0.88, 0.85, 1] : [1, 1, 1];
+        const t = this.o.vivid
+          ? (k < 0.17 ? [1, 0.5, 0.84] : k < 0.31 ? [0.5, 0.88, 1] : k < 0.43 ? [0.74, 0.58, 1] : k < 0.5 ? [1, 0.82, 0.95] : [1, 1, 1])
+          : (k < 0.08 ? [1, 0.82, 0.95] : k < 0.16 ? [0.88, 0.85, 1] : [1, 1, 1]);
         tint.push(gain * t[0], gain * t[1], gain * t[2]);
       }
     }
@@ -244,7 +260,7 @@ export class DiscoBall {
   sync() {
     const active = this.onScreen && !this.suspended && motion.running;
     this.task.setActive(active);
-    if (!active) this.draw(); // cuadro fijo, nunca en blanco
+    if (!active) { this.sweepPos = null; this.draw(); } // cuadro fijo: nunca a mitad de una ola de luz
   }
 
   tick(dt) {
@@ -255,12 +271,22 @@ export class DiscoBall {
     const k = Math.min(1, dt * 3);
     p.x += (p.tx - p.x) * k;
     p.y += (p.ty - p.y) * k;
+    if (this.o.sweep) this.updateSweep(dt);
     this.draw();
+  }
+
+  /** Ola de luz: cada `sweepEvery` segundos una franja brillante recorre los espejos en diagonal. */
+  updateSweep(dt) {
+    const every = this.o.sweepEvery;
+    this.sweepClock += dt;
+    if (this.sweepClock >= every) this.sweepClock -= every;
+    const DUR = 1.15;
+    this.sweepPos = this.sweepClock < DUR ? this.sweepClock / DUR : null;
   }
 
   lightDirs() {
     const t = this.time;
-    return LIGHTS.map((L) => {
+    return this.lights.map((L) => {
       const a = Math.sin(t * L.spd + L.ph) * L.wob;
       const b = Math.cos(t * L.spd * 0.7 + L.ph) * L.wob * 0.35;
       let [x, y, z] = L.dir;
@@ -278,6 +304,7 @@ export class DiscoBall {
     const g = this.ctx;
     const { size: S, cx, cy, R } = this;
     if (!S || !R || !this.under) return;
+    const vivid = this.o.vivid;
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.globalCompositeOperation = "source-over";
     g.globalAlpha = 1;
@@ -288,6 +315,10 @@ export class DiscoBall {
     const ct = Math.cos(this.o.tilt), st = Math.sin(this.o.tilt);
     const lights = this.lightDirs();
     const nL = lights.length;
+    // ola de luz: entra por arriba a la izquierda y sale por abajo a la derecha, suave al entrar y al salir
+    const sp = this.sweepPos;
+    const band = sp == null ? null : -0.25 + sp * 1.5;
+    const env = sp == null ? 0 : Math.sin(Math.PI * sp);
 
     const C = this.corners, N = this.normals, M = this.centers, T = this.tint;
     const glints = this.glints;
@@ -318,9 +349,10 @@ export class DiscoBall {
       const hd = (ry - 0.08) / 0.2;
       const hz = Math.exp(-(hd * hd)) * 0.32;
       const back = 0.5 + 0.5 * Math.min(1, Math.max(0, (rz + 1) / 1.4));
-      let r = (0.15 + 0.46 * up + hz * 1.3) * back;
-      let gg = (0.14 + 0.44 * up + hz * 1.28) * back;
-      let b = (0.2 + 0.5 * up + hz * 1.35) * back;
+      // (paleta intensa: el salón es azul, como en la referencia)
+      let r = (vivid ? 0.12 + 0.34 * up + hz * 1.2 : 0.15 + 0.46 * up + hz * 1.3) * back;
+      let gg = (vivid ? 0.14 + 0.46 * up + hz * 1.3 : 0.14 + 0.44 * up + hz * 1.28) * back;
+      let b = (vivid ? 0.3 + 0.66 * up + hz * 1.4 : 0.2 + 0.5 * up + hz * 1.35) * back;
 
       let spec = 0;
       for (let l = 0; l < nL; l++) {
@@ -332,6 +364,16 @@ export class DiscoBall {
         const v = sharp + d7 * 0.16 * L.p;
         r += L.c[0] * v; gg += L.c[1] * v; b += L.c[2] * v;
         if (sharp > spec) spec = sharp;
+      }
+      if (band != null) {
+        // posición del espejo en pantalla, en diagonal (0 arriba a la izquierda → 1 abajo a la derecha)
+        const u = ((mx * ca + mz * sa) - (my * ct - mz1 * st) + 2) / 4;
+        const dd = (u - band) / 0.085;
+        const w = Math.exp(-dd * dd) * 1.35 * env;
+        if (w > 0.02) {
+          r += w * 0.95; gg += w; b += w * 1.1;
+          if (w * 0.85 > spec) spec = w * 0.85; // algunos espejos de la ola sueltan un destello
+        }
       }
 
       // tono final, cuantizado a 16 niveles por canal (imperceptible en espejos)
