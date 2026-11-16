@@ -28,22 +28,37 @@
       transparent 0deg,
       var(--beam) calc(var(--spread) * 0.5),
       transparent var(--spread));
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.65) 45%, transparent 92%);
-  mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.65) 45%, transparent 92%);
-  opacity: calc(var(--o, 0.6) * var(--fx));
+  /* llegan un poco más abajo antes de desvanecerse */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.75) 50%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.75) 50%, transparent 96%);
+  opacity: calc(var(--o, 0.72) * var(--fx));
   animation: beam-sweep var(--dur) var(--ease-in-out) infinite alternate;
   animation-delay: var(--delay);
   will-change: transform;
 }
-.beam--a { --x: 8%;  --spread: 16deg; --beam: rgba(255, 45, 149, 0.48); --dur: 9s;  --delay: -4s; --from: -32deg; --to: 22deg; }
-.beam--b { --x: 92%; --spread: 14deg; --beam: rgba(139, 61, 255, 0.52); --dur: 11s; --delay: -9s; --from: 32deg; --to: -24deg; }
-.beam--c { --x: 50%; --spread: 10deg; --beam: rgba(235, 228, 255, 0.24); --dur: 14s; --delay: -2s; --from: -28deg; --to: 28deg; }
-.beam--d { --x: 30%; --spread: 9deg;  --beam: rgba(255, 92, 190, 0.40); --dur: 7.5s; --delay: -1s; --from: 26deg; --to: -30deg; }
-.beam--e { --x: 70%; --spread: 9deg;  --beam: rgba(110, 170, 255, 0.30); --dur: 8.5s; --delay: -6s; --from: -26deg; --to: 30deg; }
+/* núcleo: una franja angosta más brillante en el centro de cada haz (se lee como un reflector) */
+.beam::after {
+  content: ""; position: absolute; inset: 0;
+  background: conic-gradient(from calc(180deg - var(--spread) * 0.13) at 50% 0%,
+      transparent 0deg,
+      var(--core) calc(var(--spread) * 0.13),
+      transparent calc(var(--spread) * 0.26));
+}
+/* foco: el resplandor suave de donde sale la luz, en el borde de arriba */
+.beam::before {
+  content: ""; position: absolute; left: 50%; top: 0; width: 26vh; height: 26vh; margin: -13vh 0 0 -13vh; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--core), transparent 72%);
+  opacity: 0.8;
+}
+.beam--a { --x: 8%;  --spread: 16deg; --beam: rgba(255, 45, 149, 0.52); --core: rgba(255, 190, 225, 0.55); --dur: 9s;  --delay: -4s; --from: -32deg; --to: 22deg; }
+.beam--b { --x: 92%; --spread: 14deg; --beam: rgba(139, 61, 255, 0.56); --core: rgba(215, 190, 255, 0.55); --dur: 11s; --delay: -9s; --from: 32deg; --to: -24deg; }
+.beam--c { --x: 50%; --spread: 10deg; --beam: rgba(235, 228, 255, 0.26); --core: rgba(255, 255, 255, 0.45); --dur: 14s; --delay: -2s; --from: -28deg; --to: 28deg; }
+.beam--d { --x: 30%; --spread: 9deg;  --beam: rgba(255, 92, 190, 0.44); --core: rgba(255, 200, 232, 0.5); --dur: 7.5s; --delay: -1s; --from: 26deg; --to: -30deg; }
+.beam--e { --x: 70%; --spread: 9deg;  --beam: rgba(110, 170, 255, 0.34); --core: rgba(200, 228, 255, 0.5); --dur: 8.5s; --delay: -6s; --from: -26deg; --to: 30deg; }
 /* con la música sonando, las luces se encienden un poco más */
 .fx__beams { transition: opacity 1.2s ease; }
 html.is-music .fx__beams { opacity: 1; }
-html:not(.is-music) .fx__beams { opacity: 0.85; }
+html:not(.is-music) .fx__beams { opacity: 0.95; }
 @keyframes beam-sweep {
   from { transform: rotate(var(--from)); }
   to { transform: rotate(var(--to)); }

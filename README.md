@@ -57,13 +57,17 @@ Las confirmaciones y los temas sugeridos se guardan en una Google Sheet, en dos 
 
 1. Creá una Google Sheet nueva y abrí **Extensiones → Apps Script**.
 2. Pegá el contenido de `google/planilla.gs` y guardá.
-3. **Implementar → Nueva implementación** → tipo *Aplicación web*, ejecutar como *Yo*, acceso *Cualquier persona*.
+3. **Implementar → Nueva implementación** → tipo *Aplicación web*, ejecutar como *Yo*, acceso *Cualquier usuario*.
 4. Copiá la URL que termina en `/exec` y pegala en `planilla.url` de `config/evento.js`.
 5. Probá una confirmación y un tema desde la invitación y revisá que aparezcan en la planilla.
 
 Si después modificás el script, publicá una versión nueva: **Implementar → Administrar implementaciones → editar → Nueva versión**. Así la URL no cambia.
 
-El invitado ve "registrada" solo cuando la planilla confirma que guardó la fila. Si falla, ve un aviso para reintentar, y el reintento no duplica la fila. Con `?demo` no se envía nada.
+**Página de invitados (para la familia).** En `/invitados/` está la lista de confirmados, tomada de la misma planilla: cuántas personas vienen, quién confirmó, quién no va, restricciones con la comida y canciones sugeridas. Se actualiza sola cada 30 segundos. Solo funciona con la clave al final del link: `https://<dirección-del-sitio>/invitados/#clave=<CLAVE>`. La clave se configura en el script (`CLAVE_LISTA` en `google/planilla.gs`, ya pegado en Apps Script) y no va en el código de la web ni en git. La página no aparece en buscadores. Para ver cómo queda sin datos reales: `/invitados/?demo`.
+
+El invitado ve "registrada" solo cuando la planilla confirma que guardó la fila. Si falla, ve un aviso para reintentar, y el reintento no duplica la fila.
+
+**Ojo al probar:** con la planilla conectada, cada confirmación y cada canción que se envía llega a la planilla real, también probando en local. Después borrá esas filas a mano. `?demo` solo funciona mientras el nombre está sin cargar. Si cargás confirmaciones a mano en la planilla (por ejemplo, de alguien que avisó por teléfono), en "Asistencia" escribí exactamente `Sí`, con tilde: si no, aparece en "No vienen".
 
 ## Estructura
 

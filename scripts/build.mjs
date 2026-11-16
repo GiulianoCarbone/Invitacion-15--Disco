@@ -16,7 +16,7 @@ const { pendingFields, has } = await import(pathToFileURL(path.join(ROOT, "src/l
 
 await rm(DIST, { recursive: true, force: true });
 await mkdir(DIST, { recursive: true });
-for (const dir of ["assets", "src", "config"]) {
+for (const dir of ["assets", "src", "config", "invitados"]) {
   await cp(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true });
 }
 await writeFile(path.join(DIST, "index.html"), await renderIndex(cfg));

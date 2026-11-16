@@ -1,19 +1,28 @@
+/** @OnlyCurrentDoc */
+// ↑ Limita el permiso a ESTA planilla (sin esa línea, Google pide acceso a todas tus planillas).
+
 /**
- * Planilla de la invitación: recibe confirmaciones y temas sugeridos.
+ * Planilla de la invitación: recibe confirmaciones y temas sugeridos, y le pasa la
+ * lista a la página de invitados (solo con la clave).
  *
  * Cómo instalarlo (una sola vez):
  *   1. Creá una Google Sheet nueva (por ejemplo "Mis 15 · Respuestas").
  *   2. Menú Extensiones → Apps Script. Borrá lo que haya y pegá este archivo completo.
- *   3. Guardá. Arriba a la derecha: Implementar → Nueva implementación.
- *      Tipo: "Aplicación web".  Ejecutar como: "Yo".  Quién tiene acceso: "Cualquier persona".
- *   4. Autorizá los permisos que pide Google y copiá la URL que termina en /exec.
- *   5. Pegala en config/evento.js → planilla.url y volvé a hacer el build.
+ *   3. Reemplazá PEGAR_ACA_LA_CLAVE (abajo) por la clave de la página de invitados.
+ *      La clave queda solo acá: no va en el código de la web ni en git.
+ *   4. Guardá. Arriba a la derecha: Implementar → Nueva implementación.
+ *      Tipo: "Aplicación web".  Ejecutar como: "Yo".  Quién tiene acceso: "Cualquier usuario".
+ *   5. Autorizá los permisos que pide Google y copiá la URL que termina en /exec.
+ *   6. Pegala en config/evento.js → planilla.url y volvé a hacer el build.
  *
  * Si cambiás este código: Implementar → Administrar implementaciones → editar (lápiz) →
  * Versión: "Nueva versión". Así la URL /exec sigue siendo la misma.
  *
  * Las pestañas "Confirmaciones" y "Canciones" se crean solas con el primer envío.
  */
+
+// Clave de la página de invitados: solo quien la tenga puede ver la lista.
+var CLAVE_LISTA = "PEGAR_ACA_LA_CLAVE";
 
 var TABS = {
   confirmacion: {
@@ -39,6 +48,39 @@ var TABS = {
     },
   },
 };
+
+/** Página de invitados: devuelve la lista solo si la clave coincide. Nunca devuelve los ID internos. */
+function doGet(e) {
+  try {
+    var p = (e && e.parameter) || {};
+    if (!CLAVE_LISTA || CLAVE_LISTA === "PEGAR_ACA_LA_CLAVE" || String(p.clave || "") !== CLAVE_LISTA) {
+      return reply({ ok: false, error: "clave" });
+    }
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    return reply({
+      ok: true,
+      actualizado: new Date().toISOString(),
+      confirmaciones: readTab(ss, TABS.confirmacion, function (r) {
+        return { fecha: iso(r[0]), nombre: String(r[1]), asistencia: r[2] === "Sí" ? "si" : "no", personas: Number(r[3]) || 0, restricciones: String(r[4] || "") };
+      }),
+      canciones: readTab(ss, TABS.cancion, function (r) {
+        return { fecha: iso(r[0]), tema: String(r[1]), nombre: String(r[2] || "") };
+      }),
+    });
+  } catch (err) {
+    return reply({ ok: false, error: "servidor" });
+  }
+}
+
+function readTab(ss, tab, map) {
+  var sheet = ss.getSheetByName(tab.name);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  return sheet.getRange(2, 1, sheet.getLastRow() - 1, tab.headers.length).getValues().map(map);
+}
+
+function iso(v) {
+  return v instanceof Date ? v.toISOString() : String(v || "");
+}
 
 function doPost(e) {
   try {

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Página privada: no aparece en buscadores y no manda la dirección (con la clave) a otros sitios -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#07040d">
+<title>Invitados · Mis 15</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="../src/styles/tokens.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, h2, p, ul { margin: 0; }
+  ul { padding: 0; list-style: none; }
+  button, input { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(90% 50% at 50% 0%, rgba(139, 61, 255, 0.28), transparent 70%),
+      radial-gradient(60% 40% at 0% 100%, rgba(255, 45, 149, 0.16), transparent 70%),
+      var(--c-bg);
+    background-attachment: fixed;
+    color: var(--c-text);
+    font-family: var(--f-body);
+    font-size: 18px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible { outline: 3px solid #fff; outline-offset: 3px; border-radius: 10px; }
+  .wrap { width: min(100% - 32px, 720px); margin: 0 auto; padding: calc(var(--safe-t) + 28px) 0 calc(var(--safe-b) + 48px); }
+
+  /* Encabezado */
+  .top { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .kicker { font: 600 13px/1.2 var(--f-display); letter-spacing: 0.22em; text-transform: uppercase; color: var(--c-fuchsia-text); }
+  .name {
+    font: italic 700 clamp(40px, 12vw, 64px)/1 var(--f-glam);
+    background: var(--chrome); -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding: 0 0.08em 0.08em;
+  }
+  .status { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 14px; margin-top: 10px; }
+  .updated { font-size: 15px; color: var(--c-text-2); }
+  .updated::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 8px; border-radius: 50%; background: var(--c-ok); box-shadow: 0 0 10px var(--c-ok); vertical-align: 1px; }
+  .updated.is-error::before { background: var(--c-error); box-shadow: 0 0 10px var(--c-error); }
+  .refresh {
+    min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; cursor: pointer;
+    font-weight: 700; font-size: 15px;
+    background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px var(--c-line-strong);
+  }
+  .refresh:active { transform: scale(0.97); }
+  .refresh[aria-busy="true"] { opacity: 0.6; }
+
+  /* Resumen */
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 26px; }
+  .stat {
+    display: grid; gap: 2px; padding: 18px 16px; border-radius: var(--radius);
+    background: var(--c-panel); box-shadow: inset 0 0 0 1px var(--c-line);
+  }
+  .stat__num { font: 800 40px/1 var(--f-display); letter-spacing: -0.03em; }
+  .stat__label { font-size: 15px; color: var(--c-text-2); }
+  .stat--main { grid-column: 1 / -1; text-align: center; padding: 22px 16px;
+    background: linear-gradient(135deg, rgba(224, 18, 122, 0.32), rgba(123, 44, 255, 0.32)), var(--c-panel); }
+  .stat--main .stat__num { font-size: 64px; }
+  .stat--main .stat__label { font-size: 17px; color: var(--c-text); }
+
+  /* Pestañas y buscador */
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 26px; padding: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px var(--c-line); }
+  .tab { min-height: 56px; padding: 4px 6px; border: 0; border-radius: 999px; background: transparent; cursor: pointer; font-weight: 700; font-size: 16px; line-height: 1.15; color: var(--c-text-2); }
+  .tab[aria-selected="true"] { color: #fff; background: linear-gradient(135deg, var(--c-btn-a), var(--c-btn-b)); box-shadow: 0 6px 18px -6px rgba(224, 18, 122, 0.7); }
+  .tab small { display: block; font-size: 13px; font-weight: 600; opacity: 0.85; }
+  .search { margin-top: 14px; }
+  .search input {
+    width: 100%; min-height: 52px; padding: 0 18px; border: 0; border-radius: 16px;
+    background: var(--c-field); box-shadow: inset 0 0 0 1.5px var(--c-line); font-size: 17px;
+  }
+  .search input::placeholder { color: var(--c-text-3); }
+
+  /* Lista */
+  .list { display: grid; gap: 10px; margin-top: 14px; }
+  .item {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center;
+    padding: 16px 18px; border-radius: 18px; background: var(--c-panel); box-shadow: inset 0 0 0 1px var(--c-line);
+  }
+  .item__name { font-weight: 800; font-size: 19px; line-height: 1.25; overflow-wrap: anywhere; }
+  .item__count {
+    grid-row: span 2; align-self: center; min-width: 58px; padding: 8px 10px; border-radius: 14px; text-align: center;
+    font: 800 24px/1 var(--f-display); background: rgba(255, 45, 149, 0.16); box-shadow: inset 0 0 0 1px rgba(255, 124, 188, 0.4);
+  }
+  .item__count small { display: block; margin-top: 4px; font: 600 11px/1 var(--f-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-text-2); }
+  .item__meta { font-size: 15px; color: var(--c-text-2); }
+  .item__diet { grid-column: 1 / -1; margin-top: 6px; padding: 8px 12px; border-radius: 12px; font-size: 16px; font-weight: 700; color: #ffe3a3; background: rgba(255, 200, 80, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 210, 120, 0.3); }
+  .item__changed { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--c-violet-text); box-shadow: inset 0 0 0 1px rgba(187, 155, 255, 0.45); }
+  .item--new { box-shadow: inset 0 0 0 1.5px rgba(143, 240, 198, 0.55), 0 0 22px -8px rgba(143, 240, 198, 0.6); }
+  .item__new { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #0b2a1e; background: var(--c-ok); }
+  .empty, .notice { margin-top: 18px; padding: 22px 20px; border-radius: 18px; text-align: center; font-size: 17px; color: var(--c-text-2); background: var(--c-panel); box-shadow: inset 0 0 0 1px var(--c-line); }
+  .notice strong { display: block; margin-bottom: 6px; font-size: 19px; color: #fff; }
+  .demo { margin-top: 14px; text-align: center; font-size: 14px; font-weight: 700; color: var(--c-violet-text); }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <p class="kicker">Lista de invitados</p>
+    <h1 class="name" data-name>Mis 15</h1>
+    <div class="status">
+      <p class="updated" data-updated aria-live="polite">Cargando…</p>
+      <button type="button" class="refresh" data-refresh>Actualizar</button>
+    </div>
+    <p class="demo" data-demo hidden>Vista de muestra con invitados inventados</p>
+  </header>
+
+  <section class="stats" data-stats aria-label="Resumen" hidden>
+    <div class="stat stat--main"><span class="stat__num" data-n="personas">0</span><span class="stat__label">personas vienen a la fiesta</span></div>
+    <div class="stat"><span class="stat__num" data-n="si">0</span><span class="stat__label">confirmaron que van</span></div>
+    <div class="stat"><span class="stat__num" data-n="no">0</span><span class="stat__label">no pueden ir</span></div>
+    <div class="stat"><span class="stat__num" data-n="dieta">0</span><span class="stat__label">con restricción en la comida</span></div>
+    <div class="stat"><span class="stat__num" data-n="canciones">0</span><span class="stat__label">canciones sugeridas</span></div>
+  </section>
+
+  <div data-content hidden>
+    <div class="tabs" role="tablist" aria-label="Ver">
+      <button type="button" class="tab" role="tab" aria-selected="true" data-tab="si">Vienen</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="no">No vienen</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="canciones">Canciones</button>
+    </div>
+    <div class="search"><input type="search" placeholder="Buscar por nombre" aria-label="Buscar por nombre" data-search autocomplete="off"></div>
+    <ul class="list" data-list></ul>
+    <p class="empty" data-empty hidden></p>
+  </div>
+
+  <div class="notice" data-notice hidden></div>
+</main>
+
+<script type="module">
+  import cfg from "../config/evento.js";
+  import { sheetUrl, has } from "../src/lib/data.js";
+
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const norm = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  const REFRESH_MS = 30000;
+  const SEEN = "xv15:invitados-visto";
+  const KEY = "xv15:invitados-clave";
+
+  if (has(cfg.nombre)) {
+    $("[data-name]").textContent = cfg.nombre.trim();
+    document.title = `Invitados · Mis 15 de ${cfg.nombre.trim()}`;
+  }
+
+  const params = new URLSearchParams(location.search);
+  const isDemo = params.has("demo");
+  const url = sheetUrl(cfg);
+
+  // La clave viene en el link (#clave=…) y queda guardada en este celular por si se abre sin ella.
+  function readKey() {
+    const fromLink = new URLSearchParams(location.hash.slice(1)).get("clave");
+    if (fromLink) { try { localStorage.setItem(KEY, fromLink); } catch { /* sin almacenamiento */ } return fromLink; }
+    try { return localStorage.getItem(KEY); } catch { return null; }
+  }
+  const key = readKey();
+
+  // Desde cuándo marcar como "nuevo" (lo que llegó desde la última visita)
+  let lastSeen = 0;
+  try { lastSeen = Number(localStorage.getItem(SEEN)) || 0; } catch { /* nada */ }
+
+  const state = { tab: "si", q: "", data: null };
+
+  function notice(title, text) {
+    const el = $("[data-notice]");
+    el.innerHTML = `<strong>${esc(title)}</strong>${esc(text)}`;
+    el.hidden = false;
+  }
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    const now = new Date();
+    const time = d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false });
+    const sameDay = (a, b) => a.toDateString() === b.toDateString();
+    const yest = new Date(now); yest.setDate(now.getDate() - 1);
+    if (sameDay(d, now)) return `hoy ${time}`;
+    if (sameDay(d, yest)) return `ayer ${time}`;
+    return `${d.toLocaleDateString("es-AR", { day: "numeric", month: "numeric" })} ${time}`;
+  }
+
+  /** Una respuesta por persona: si alguien confirmó más de una vez, vale la última. */
+  function summarize(raw) {
+    const byName = new Map();
+    for (const c of raw.confirmaciones || []) {
+      const k = norm(c.nombre);
+      if (!k) continue;
+      const prev = byName.get(k);
+      const times = (prev?.times || 0) + 1;
+      if (!prev || String(c.fecha) >= String(prev.fecha)) byName.set(k, { ...c, times });
+      else prev.times = times;
+    }
+    const people = [...byName.values()].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+    const si = people.filter((p) => p.asistencia === "si");
+    const no = people.filter((p) => p.asistencia !== "si");
+    const canciones = [...(raw.canciones || [])].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+    return {
+      si, no, canciones,
+      personas: si.reduce((n, p) => n + (Number(p.personas) || 1), 0),
+      dieta: si.filter((p) => p.restricciones && p.restricciones.trim()).length,
+    };
+  }
+
+  function render() {
+    const d = state.data;
+    if (!d) return;
+    $("[data-stats]").hidden = false;
+    $("[data-content]").hidden = false;
+    for (const [k, v] of Object.entries({ personas: d.personas, si: d.si.length, no: d.no.length, dieta: d.dieta, canciones: d.canciones.length })) {
+      $(`[data-n="${k}"]`).textContent = String(v);
+    }
+    document.querySelectorAll("[data-tab]").forEach((b) => {
+      const k = b.dataset.tab;
+      const count = k === "canciones" ? d.canciones.length : d[k].length;
+      b.innerHTML = `${{ si: "Vienen", no: "No vienen", canciones: "Canciones" }[k]}<small>${count}</small>`;
+      b.setAttribute("aria-selected", String(k === state.tab));
+    });
+    $("[data-search]").placeholder = state.tab === "canciones" ? "Buscar canción o nombre" : "Buscar por nombre";
+
+    const q = norm(state.q);
+    const list = $("[data-list]");
+    const empty = $("[data-empty]");
+    let html = "";
+    if (state.tab === "canciones") {
+      const rows = d.canciones.filter((c) => !q || norm(c.tema).includes(q) || norm(c.nombre).includes(q));
+      html = rows.map((c) => `<li class="item"><span class="item__name">${esc(c.tema)}</span><span class="item__meta">${c.nombre ? `Sugerida por ${esc(c.nombre)} · ` : ""}${esc(fmtDate(c.fecha))}</span></li>`).join("");
+      empty.textContent = q ? "No hay canciones que coincidan con la búsqueda." : "Todavía nadie sugirió canciones.";
+      empty.hidden = rows.length > 0;
+    } else {
+      const rows = d[state.tab].filter((p) => !q || norm(p.nombre).includes(q));
+      html = rows.map((p) => {
+        const isNew = lastSeen && new Date(p.fecha).getTime() > lastSeen;
+        const count = Number(p.personas) || 1;
+        return `<li class="item${isNew ? " item--new" : ""}">
+          <span class="item__name">${esc(p.nombre)}${isNew ? '<span class="item__new">Nuevo</span>' : ""}${p.times > 1 ? '<span class="item__changed">Actualizó su respuesta</span>' : ""}</span>
+          ${state.tab === "si" ? `<span class="item__count">${count}<small>${count === 1 ? "persona" : "personas"}</small></span>` : ""}
+          <span class="item__meta">${esc(fmtDate(p.fecha))}</span>
+          ${state.tab === "si" && p.restricciones ? `<span class="item__diet">Comida: ${esc(p.restricciones)}</span>` : ""}
+        </li>`;
+      }).join("");
+      empty.textContent = q ? "No hay nadie con ese nombre en esta lista."
+        : state.tab === "si" ? "Todavía nadie confirmó. Apenas lo hagan, aparecen acá." : "Por ahora nadie avisó que no puede ir.";
+      empty.hidden = rows.length > 0;
+    }
+    list.innerHTML = html;
+  }
+
+  const DEMO = {
+    confirmaciones: [
+      { fecha: new Date(Date.now() - 20 * 60e3).toISOString(), nombre: "Laura Gómez", asistencia: "si", personas: 3, restricciones: "Un celíaco" },
+      { fecha: new Date(Date.now() - 3 * 3600e3).toISOString(), nombre: "Marcos Díaz", asistencia: "si", personas: 2, restricciones: "" },
+      { fecha: new Date(Date.now() - 26 * 3600e3).toISOString(), nombre: "Sofía Romero", asistencia: "no", personas: 0, restricciones: "" },
+      { fecha: new Date(Date.now() - 2 * 86400e3).toISOString(), nombre: "Familia Pérez", asistencia: "si", personas: 4, restricciones: "Vegetariana" },
+      { fecha: new Date(Date.now() - 3 * 86400e3).toISOString(), nombre: "Marcos Diaz", asistencia: "no", personas: 0, restricciones: "" },
+    ],
+    canciones: [
+      { fecha: new Date(Date.now() - 2 * 3600e3).toISOString(), tema: "Dancing Queen – ABBA", nombre: "Laura Gómez" },
+      { fecha: new Date(Date.now() - 30 * 3600e3).toISOString(), tema: "I Will Survive – Gloria Gaynor", nombre: "" },
+    ],
+  };
+
+  let timer = 0;
+  let busy = false;
+  async function load() {
+    if (busy) return;
+    busy = true;
+    const btn = $("[data-refresh]");
+    btn.setAttribute("aria-busy", "true");
+    const upd = $("[data-updated]");
+    try {
+      let raw;
+      if (isDemo) raw = DEMO;
+      else {
+        const res = await fetch(`${url}?clave=${encodeURIComponent(key)}&t=${Date.now()}`, { cache: "no-store" });
+        raw = await res.json().catch(() => null);
+        if (!raw || !raw.ok) {
+          if (raw && raw.error === "clave") {
+            notice("El link no es válido", "Pedí de nuevo el link de la lista de invitados.");
+            upd.textContent = "Sin acceso";
+            upd.classList.add("is-error");
+            clearInterval(timer);
+            return;
+          }
+          throw new Error(raw?.error || "respuesta");
+        }
+      }
+      state.data = summarize(raw);
+      $("[data-notice]").hidden = true;
+      upd.classList.remove("is-error");
+      upd.textContent = `Actualizado a las ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })}`;
+      render();
+    } catch {
+      upd.classList.add("is-error");
+      upd.textContent = state.data ? "No se pudo actualizar (se vuelve a intentar sola)" : "No se pudo cargar";
+      if (!state.data) notice("No se pudo cargar la lista", "Revisá la conexión a internet. La página vuelve a intentarlo sola.");
+    } finally {
+      busy = false;
+      btn.removeAttribute("aria-busy");
+    }
+  }
+
+  if (isDemo) $("[data-demo]").hidden = false;
+  if (!isDemo && !url) {
+    notice("Falta conectar la planilla", "Cargá planilla.url en config/evento.js.");
+    $("[data-updated]").textContent = "Sin conexión con la planilla";
+  } else if (!isDemo && !key) {
+    notice("Falta la clave", "Abrí esta página desde el link que te pasamos: al final tiene la clave.");
+    $("[data-updated]").textContent = "Sin acceso";
+  } else {
+    load();
+    timer = setInterval(() => { if (!document.hidden) load(); }, REFRESH_MS);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+  }
+
+  // Si pegan el link con la clave en la misma pestaña, el navegador no recarga solo
+  addEventListener("hashchange", () => location.reload());
+
+  // Lo que estaba al abrir la página deja de ser "nuevo" en la próxima visita
+  addEventListener("pagehide", () => { try { localStorage.setItem(SEEN, String(Date.now())); } catch { /* nada */ } });
+
+  $("[data-refresh]").addEventListener("click", () => load());
+  document.querySelector(".tabs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tab]");
+    if (!b) return;
+    state.tab = b.dataset.tab;
+    render();
+  });
+  $("[data-search]").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+</script>
+</body>
+</html>

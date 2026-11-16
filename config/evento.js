@@ -78,7 +78,7 @@ export default {
   // en google/planilla.gs. Pegá acá la URL que termina en /exec.
   // Si queda vacía, los formularios muestran lo que se guardaría, sin enviar.
   planilla: {
-    url: "", //                      ej: "https://script.google.com/macros/s/AKfy…/exec"
+    url: "https://script.google.com/macros/s/AKfycbz13R4tR-bPyLLOjHC-2napDSvzuHz3NkR29o6wcN4TkE-YJXGaSYT9c2_HxVQqfofwSw/exec",
   },
 
   // ── Confirmación de asistencia ──────────────────────────────────────
