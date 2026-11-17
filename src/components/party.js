@@ -1,8 +1,9 @@
 /**
  * Detalles que dan vida a la invitación:
  *  - destellos donde el invitado toca la pantalla
- *  - festejo al confirmar (lluvia de brillos)
+ *  - lluvia de brillos (al entrar a la fiesta y en la sorpresa)
  *  - sorpresa: 5 toques seguidos sobre la bola activan unos segundos de "modo fiesta"
+ * El festejo al confirmar asistencia está en celebration.js.
  * Todo se apaga solo con "reducir movimiento" y anima solo transform y opacity.
  */
 import { motion, quality } from "../lib/motion.js";
@@ -70,11 +71,6 @@ export function confetti(count) {
     // se borran solo las piezas de esta tanda
     Array.from(root.children).slice(0, n).forEach((c) => c.remove());
   }, 4600);
-}
-
-/* ── Festejo al confirmar (la pista de baile ya está siempre encendida) ── */
-export function celebrate() {
-  confetti();
 }
 
 /* ── Modo fiesta: al entrar a la invitación y como sorpresa (5 toques en la bola) ── */

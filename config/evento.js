@@ -21,7 +21,7 @@ export default {
     // Dirección pública donde va a quedar publicada la invitación.
     // WhatsApp la necesita para mostrar la imagen de vista previa.
     // Ejemplo: "https://mis15-valentina.netlify.app"
-    url: "https://mis15-valentina.netlify.app", // FICTICIO: reemplazar por la dirección real
+    url: "https://mis15-montserrat.netlify.app",
     // Opcional. Si quedan vacíos se arman solos con el nombre.
     titulo: "",
     descripcion: "",

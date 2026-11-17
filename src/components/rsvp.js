@@ -2,7 +2,7 @@ import { $, $$, icon, escapeHtml, burst } from "../lib/dom.js";
 import { quality } from "../lib/motion.js";
 import { zonedToDate } from "../lib/time.js";
 import { sheetUrl, sendToSheet, newId } from "../lib/sheet.js";
-import { celebrate } from "./party.js";
+import { celebrate } from "./celebration.js";
 
 const LABEL = "Enviar confirmación";
 
@@ -144,11 +144,12 @@ export function initRsvp(model, { isDemo }) {
   }
 
   let resetTimer = 0;
-  function flashButton(text) {
+  /** `sparks`: los brillitos del botón (si confirma que viene, ya está el festejo grande). */
+  function flashButton(text, { sparks = true } = {}) {
     clearTimeout(resetTimer);
     submit.classList.add("is-done");
     submitLabel.textContent = text;
-    burst(submit);
+    if (sparks) burst(submit);
     resetTimer = setTimeout(() => {
       submit.classList.remove("is-done");
       submitLabel.textContent = LABEL;
@@ -171,6 +172,11 @@ export function initRsvp(model, { isDemo }) {
     }
     clamp();
     const data = collect();
+    const yes = data.asistencia === "si";
+    const hadFocus = document.activeElement === submit;
+    // celular: si envió con "Listo" del teclado, se cierra el teclado para que se vea el festejo
+    const typing = document.activeElement;
+    if (matchMedia("(pointer: coarse)").matches && typing && form.contains(typing) && typing.matches("input:not([type=radio]), textarea")) typing.blur();
 
     if (!url || isDemo) {
       status.className = "rsvp__status is-sample";
@@ -178,8 +184,8 @@ export function initRsvp(model, { isDemo }) {
         <strong>${icon("info")}Versión de muestra</strong>
         <span>${isDemo ? "En la vista de ejemplo no se guardan respuestas." : "Todavía falta conectar la planilla de Google (<code>planilla.url</code>)."} Esto es lo que se guardaría:</span>
         <pre>${escapeHtml(summary(data))}</pre>`;
-      flashButton("Respuesta preparada");
-      if (data.asistencia === "si") celebrate(); // en la muestra también, para ver el efecto
+      flashButton("Respuesta preparada", { sparks: !yes });
+      if (yes) celebrate(submit); // en la muestra también, para ver el efecto
       return;
     }
 
@@ -193,17 +199,18 @@ export function initRsvp(model, { isDemo }) {
 
     const res = await sendToSheet(url, { ...data, id: pendingId });
     setBusy(submit, submitLabel, false, LABEL);
+    // mientras viajaba, el botón deshabilitado perdió el foco: si lo tenía, vuelve ahí (teclado y lectores de pantalla)
+    if (hadFocus && document.activeElement === document.body) submit.focus({ preventScroll: true });
 
     if (res.ok) {
       pendingId = null;
       lastKey = "";
-      const yes = data.asistencia === "si";
       status.className = "rsvp__status is-ok";
       status.innerHTML = `
         <strong>${icon("check")}${yes ? "¡Listo! Te espero en la pista" : "¡Gracias por avisar!"}</strong>
         <span>Tu respuesta quedó registrada. Si necesitás cambiar algo, volvé a enviarla.</span>`;
-      flashButton(yes ? "¡Confirmado!" : "Respuesta enviada");
-      if (yes) celebrate();
+      flashButton(yes ? "¡Confirmado!" : "Respuesta enviada", { sparks: !yes });
+      if (yes) celebrate(submit); // se mide el botón ahora: pudo haber scrolleado mientras esperaba
     } else {
       status.className = "rsvp__status is-error";
       status.innerHTML = `

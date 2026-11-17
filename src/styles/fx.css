@@ -387,3 +387,107 @@ html.js:not(.reveal-off) [data-fx="warp"] [data-reveal]:not(.is-in) > * { transf
 html.js:not(.reveal-off) [data-fx="flash"] [data-reveal]:not(.is-in) > * { transform: none; }
 html.js:not(.reveal-off) [data-fx="eq"] [data-reveal]:not(.is-in) > * { transform: translateY(70px); }
 html.js:not(.reveal-off) [data-fx="lasers"] [data-reveal]:not(.is-in) > * { transform: translateY(24px) scale(0.95); }
+
+/* ══════════════════════════════════════════════════════════════
+   Festejo al confirmar asistencia (celebration.js)
+   Capa encima de todo (también del dock) y sin bloquear nada. Solo transform y opacity.
+   ══════════════════════════════════════════════════════════════ */
+.cele { position: fixed; inset: 0; z-index: 65; pointer-events: none; overflow: hidden; contain: strict; visibility: hidden; }
+.cele.is-on { visibility: visible; }
+.cele > * { position: absolute; }
+.cele canvas { display: block; max-width: none; }
+.cele__parts { inset: 0; width: 100%; height: 100%; }
+
+/* Un solo destello suave desde el botón (nunca estroboscópico) */
+.cele__flash {
+  inset: 0; opacity: 0;
+  background: radial-gradient(circle at var(--ox) var(--oy), rgba(255, 255, 255, 0.62), rgba(150, 230, 255, 0.3) 16%, rgba(255, 90, 185, 0.14) 34%, transparent 58%);
+}
+.cele.is-on .cele__flash { animation: cele-flash 0.75s ease-out forwards; }
+@keyframes cele-flash { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Ondas de neón que salen del botón */
+.cele__ring {
+  left: var(--ox); top: var(--oy); width: 34vmin; height: 34vmin; margin: -17vmin 0 0 -17vmin; border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(150, 235, 255, 0.95), 0 0 24px 6px rgba(80, 200, 255, 0.55), inset 0 0 20px 4px rgba(255, 90, 180, 0.45);
+  opacity: 0; transform: scale(0.1);
+}
+.cele__ring--b { box-shadow: 0 0 0 3px rgba(255, 120, 200, 0.95), 0 0 24px 6px rgba(255, 45, 149, 0.5), inset 0 0 20px 4px rgba(120, 225, 255, 0.4); }
+.cele.is-on .cele__ring { animation: cele-ring 1.05s cubic-bezier(0.2, 0.6, 0.3, 1) forwards; }
+.cele.is-on .cele__ring--b { animation-delay: 0.15s; }
+@keyframes cele-ring { 0% { opacity: 0; transform: scale(0.1); } 10% { opacity: 1; } 100% { opacity: 0; transform: scale(4.6); } }
+
+/* Cartel "¡Estás en la lista!" con el estallido de rayos de la portada detrás */
+/* el cartel se centra sobre la línea --ey (alto 0); los rayos tienen tamaño fijo y se centran con márgenes */
+.cele__emblem { left: 0; right: 0; top: var(--ey, 31%); height: 0; --rs: min(118vmin, 780px); }
+.cele__emblem > * { position: absolute; }
+.cele__center { left: 0; right: 0; top: 0; display: flex; justify-content: center; transform: translateY(-50%); }
+.cele__rays {
+  left: 50%; top: 0; width: var(--rs); height: var(--rs); margin: calc(var(--rs) / -2) 0 0 calc(var(--rs) / -2);
+  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 35%, transparent 100%);
+  opacity: 0;
+}
+.cele.is-on .cele__rays { animation: cele-rays 3.4s var(--ease-out) 0.04s both; }
+@keyframes cele-rays {
+  0% { opacity: 0; transform: scale(0.15) rotate(-35deg); }
+  10% { opacity: 1; }
+  32% { transform: scale(1) rotate(0deg); }
+  72% { opacity: 0.9; }
+  100% { opacity: 0; transform: scale(1.2) rotate(38deg); }
+}
+.cele__stamp {
+  position: relative; display: grid; justify-items: center;
+  padding: 0.5em 0.9em 0.6em;
+  text-align: center; white-space: nowrap;
+  opacity: 0;
+}
+/* sombra oscura detrás del texto: se lee sobre cualquier parte de la invitación */
+.cele__stamp::before {
+  content: ""; position: absolute; inset: -18% -14%; z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(7, 4, 13, 0.86), rgba(7, 4, 13, 0.6) 55%, transparent 100%);
+}
+.cele.is-on .cele__stamp { animation: cele-stamp 3.2s var(--ease-out) 0.08s both; }
+@keyframes cele-stamp {
+  0% { opacity: 0; transform: scale(0.3) rotate(-14deg); }
+  9% { opacity: 1; }
+  19% { transform: scale(1.08) rotate(-3deg); }
+  27% { transform: scale(1) rotate(-5deg); }
+  80% { opacity: 1; transform: scale(1.03) rotate(-4deg); }
+  100% { opacity: 0; transform: scale(1.18) rotate(-2deg); }
+}
+/* como el "Mis 15" del inicio: palabra en itálica fucsia + palabra grande de espejos */
+.cele__kicker {
+  justify-self: start; margin: 0 0 -0.06em 0.15em;
+  font-family: var(--f-glam); font-style: italic; font-weight: 700;
+  font-variation-settings: "opsz" 72;
+  font-size: clamp(30px, min(9.2vw, 10.5vh), 66px); line-height: 1;
+  color: var(--c-fuchsia-text);
+  text-shadow: 0 0 0.35em rgba(255, 45, 149, 0.65);
+}
+.cele__big {
+  position: relative;
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(32px, min(11.5vw, 13vh), 100px); line-height: 0.95; letter-spacing: -0.03em;
+  padding: 0 0.06em;
+  background: var(--chrome);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+.cele__big::before { /* resplandor de neón detrás del cromo */
+  content: attr(data-text); position: absolute; inset: 0; z-index: -1;
+  padding: inherit;
+  -webkit-text-fill-color: transparent; color: transparent;
+  text-shadow: 0 0 0.16em rgba(255, 45, 149, 0.85), 0 0 0.5em rgba(139, 61, 255, 0.6), 0 0 1em rgba(80, 210, 255, 0.35);
+}
+.cele__star { position: absolute; font-size: clamp(30px, min(9vw, 10vh), 64px); width: 0.85em; height: 0.85em; color: #fff; opacity: 0; }
+.cele__star svg { display: block; width: 100%; height: 100%; fill: currentColor; filter: drop-shadow(0 0 6px rgba(160, 235, 255, 0.95)); }
+.cele__star--a { right: 0.15em; top: 0.2em; }
+.cele__star--b { left: 0.25em; bottom: 0.15em; width: 0.6em; height: 0.6em; }
+.cele.is-on .cele__star { animation: cele-star 0.9s var(--ease-out) 0.55s both; }
+.cele.is-on .cele__star--b { animation-delay: 1.2s; }
+@keyframes cele-star {
+  0% { opacity: 0; transform: scale(0.2) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1.1) rotate(45deg); }
+  100% { opacity: 0; transform: scale(0.4) rotate(90deg); }
+}

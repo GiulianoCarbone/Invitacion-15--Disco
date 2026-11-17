@@ -57,10 +57,19 @@ function build(kind) {
 }
 
 let player = null;
+let holder = null;
 /** Reproduce un efecto puntual (por ejemplo, los láseres al entrar a la fiesta). */
 export function playFx(kind) {
   if (!player || !DURATION[kind] || off()) return;
   player(kind);
+}
+
+/**
+ * El festejo de la confirmación toma la pantalla `ms` milisegundos: corta el efecto
+ * que esté en curso y el de la próxima sección espera a que termine.
+ */
+export function holdFx(ms) {
+  holder?.(ms);
 }
 
 export function initSectionFx() {
@@ -70,6 +79,7 @@ export function initSectionFx() {
   document.body.appendChild(root);
 
   let busy = false;
+  let endTimer = 0;
   const played = new Set();
   const timers = new Map();
   const inView = new Set();
@@ -79,20 +89,30 @@ export function initSectionFx() {
     played.add(id);
     play(EFFECTS[id]);
   }
+  function finish() {
+    root.replaceChildren();
+    busy = false;
+    // si mientras tanto llegó otra sección y sigue en pantalla, ahora le toca a ella
+    const next = [...inView].find((id) => !played.has(id));
+    if (next) {
+      clearTimeout(timers.get(next));
+      timers.set(next, setTimeout(() => { if (inView.has(next)) tryPlay(next); }, DWELL));
+    }
+  }
   function play(kind) {
     busy = true;
-    const el = build(kind);
-    root.replaceChildren(el);
-    setTimeout(() => {
-      el.remove();
-      busy = false;
-      // si mientras tanto llegó otra sección y sigue en pantalla, ahora le toca a ella
-      const next = [...inView].find((id) => !played.has(id));
-      if (next) timers.set(next, setTimeout(() => { if (inView.has(next)) tryPlay(next); }, DWELL));
-    }, DURATION[kind] + 60);
+    root.replaceChildren(build(kind));
+    clearTimeout(endTimer);
+    endTimer = setTimeout(finish, DURATION[kind] + 60);
   }
 
   player = (kind) => { if (!busy) play(kind); };
+  holder = (ms) => {
+    root.replaceChildren();
+    busy = true;
+    clearTimeout(endTimer);
+    endTimer = setTimeout(finish, ms);
+  };
 
   const sections = Object.keys(EFFECTS).map((id) => document.getElementById(id)).filter((s) => s && !s.hidden);
   sections.forEach((s) => s.setAttribute("data-fx", EFFECTS[s.id]));

@@ -21,6 +21,7 @@ import { initRsvp } from "./components/rsvp.js";
 import { initDress, initGifts, initExtras, initMarquees } from "./components/sections.js";
 import { initDock } from "./components/dock.js";
 import { initTapSparkles, initPartyMode } from "./components/party.js";
+import { initCelebration } from "./components/celebration.js";
 import { initSectionFx, playFx } from "./components/sectionFx.js";
 
 const { cfg, isDemo } = resolveConfig(base, demo, location.search);
@@ -40,6 +41,7 @@ initCountdown(model);
 initVenue(model, initCalendar(model, { isDemo }));
 initDress(model);
 initRsvp(model, { isDemo });
+initCelebration();
 initGifts(model);
 initExtras(model, { isDemo });
 initMarquees(model);

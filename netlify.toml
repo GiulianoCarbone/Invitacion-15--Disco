@@ -1,0 +1,8 @@
+# Netlify: arma el sitio con el build (completa la vista previa para WhatsApp con la
+# dirección real, genera evento.ics) y publica la carpeta dist/.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
