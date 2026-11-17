@@ -71,7 +71,7 @@ export function buildModel(cfg) {
     datePill: has(cfg.fecha?.textoVisible) ? cfg.fecha.textoVisible : sp ? `${cap(weekdayOf(sp))} ${sp.d} de ${monthName(sp)} · ${sp.y}` : null,
     dateShort: sp ? formatShortDate(sp) : null,
     timeRange: time ? (endTime ? `De ${time} a ${endTime} h` : `Desde las ${time} h`) : null,
-    deadline: deadlineP ? formatDayMonth(deadlineP) : null,
+    deadline: deadlineP ? `${weekdayOf(deadlineP)} ${formatDayMonth(deadlineP)}` : null,
     deadlineP,
     partyMaps: mapsLink(cfg.fiesta || {}),
     ceremonyMaps: mapsLink(cfg.ceremonia || {}),

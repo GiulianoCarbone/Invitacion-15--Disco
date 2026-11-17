@@ -412,6 +412,12 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
   content: ""; position: absolute; left: 50%; top: -10%; width: 2.5px; height: 120%; margin-left: -1.25px;
   background: #fff; transform: rotate(45deg); box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
 }
+/* Colores claros: color pleno con volumen (sobre el espejo, el blanco se vería plateado) */
+.swatch__chip--light {
+  background: radial-gradient(circle at 34% 28%, #fff 0 26%, var(--sw) 55%, #cfc9dd 100%);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45), 0 0 30px -4px rgba(255, 255, 255, 0.6);
+}
+.swatch__chip--light::after { background: #2a1342; box-shadow: none; }
 
 /* ── Confirmación: pista de baile ── */
 .rsvp { overflow: clip; padding-bottom: clamp(96px, 18vw, 180px); }

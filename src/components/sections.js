@@ -20,8 +20,17 @@ export function initDress(model) {
   wrap.hidden = false;
   const list = $("[data-swatches]", section);
   list.setAttribute("aria-label", `${d.notaColores || "Colores reservados"}: ${colors.map((c) => c.nombre || c.color).join(", ")}`);
+  // los colores claros (blanco, crema) van lisos: sobre la textura de espejo se verían plateados
   list.innerHTML = colors.map((c) => `
-    <li class="swatch"><span class="swatch__chip" style="--sw:${escapeHtml(c.color.trim())}" aria-hidden="true"></span><span>${escapeHtml(c.nombre || c.color)}</span></li>`).join("");
+    <li class="swatch"><span class="swatch__chip${isLight(c.color) ? " swatch__chip--light" : ""}" style="--sw:${escapeHtml(c.color.trim())}" aria-hidden="true"></span><span>${escapeHtml(c.nombre || c.color)}</span></li>`).join("");
+}
+
+/** "#fff", "#ffffff" o "#ffffffaa" → true si el color es muy claro. */
+function isLight(hex) {
+  let h = String(hex).trim().slice(1);
+  if (h.length <= 4) h = [...h.slice(0, 3)].map((ch) => ch + ch).join("");
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.86;
 }
 
 /* ── Copiar con feedback ── */

@@ -4,6 +4,7 @@
  * compartir) a partir de config/evento.js, y generan evento.ics.
  */
 import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 
@@ -32,7 +33,13 @@ export async function renderIndex(cfg) {
   setMeta("description", description, "name");
   setMeta("og:title", title);
   setMeta("og:description", description);
-  if (site) setMeta("og:image", `${site}/assets/og-image.jpg`);
+  if (site) {
+    // ?v=<huella del archivo>: si cambia la imagen, cambia la dirección y los servicios que
+    // guardan copia (Facebook, Telegram…) no siguen mostrando la vieja
+    let v = "";
+    try { v = `?v=${createHash("sha1").update(await readFile(path.join(ROOT, "assets/og-image.jpg"))).digest("hex").slice(0, 8)}`; } catch { /* sin imagen: sin versión */ }
+    setMeta("og:image", `${site}/assets/og-image.jpg${v}`);
+  }
 
   const extra = [];
   if (site) {

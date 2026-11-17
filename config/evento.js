@@ -32,8 +32,8 @@ export default {
 
   // ── Fecha y horario ─────────────────────────────────────────────────
   fecha: {
-    inicio: "2026-12-17T21:30", //   ej: "2027-03-20T21:30"
-    fin: "2026-12-18T05:00", //      ej: "2027-03-21T05:00" (opcional)
+    inicio: "2026-12-11T22:00", //   ej: "2027-03-20T21:30"
+    fin: "2026-12-12T06:00", //      ej: "2027-03-21T05:00" (opcional)
     zonaHoraria: "America/Argentina/Buenos_Aires",
     // Opcional: reemplaza la fecha que se arma automáticamente.
     textoVisible: "", //             ej: "Sábado 20 de marzo"
@@ -41,12 +41,12 @@ export default {
 
   // ── Fiesta ──────────────────────────────────────────────────────────
   fiesta: {
-    salon: "Salón Cristal",
-    direccion: "Av. Pellegrini 1500",
-    ciudad: "Rosario, Santa Fe",
+    salon: "Benshari Country",
+    direccion: "Ruta 325 Km 8",
+    ciudad: "El Cercado, Tucumán",
     // Opcional: link de Google Maps del salón. Si queda vacío,
     // "Cómo llegar" busca la dirección de arriba.
-    mapsUrl: "",
+    mapsUrl: "https://maps.app.goo.gl/qZgBdDkDh6s93Hoj7",
   },
 
   // ── Ceremonia (solo si se hace en otro lugar) ───────────────────────
@@ -62,12 +62,12 @@ export default {
 
   // ── Dress code ──────────────────────────────────────────────────────
   dressCode: {
-    estilo: "Elegante con brillo", // ej: "Elegante con brillo"
-    indicaciones: "Lentejuelas, metalizados y calzado cómodo: se baila toda la noche.",
+    estilo: "Elegante", //           ej: "Elegante con brillo"
+    indicaciones: "", //             opcional: una línea de sugerencias debajo del estilo
     // Colores que nadie debería usar. Dejalo vacío [] si no hay.
     // ej: [{ nombre: "Fucsia", color: "#ff2d95" }]
     coloresReservados: [
-      { nombre: "Fucsia", color: "#ff2d95" },
+      { nombre: "Blanco", color: "#ffffff" },
       { nombre: "Plateado", color: "#c9c6d6" },
     ],
     notaColores: "Reservados para la cumpleañera",
@@ -83,19 +83,20 @@ export default {
 
   // ── Confirmación de asistencia ──────────────────────────────────────
   confirmacion: {
-    fechaLimite: "2026-12-07", //    ej: "2027-03-01"
+    fechaLimite: "2026-11-28", //    ej: "2027-03-01"
     permiteAcompanantes: true,
-    maxAsistentes: 4, //             máximo por confirmación, incluyendo a quien confirma
+    // máximo por confirmación, incluyendo a quien confirma
+    // (hay invitaciones para 1, 2, 3 y 4 personas: grupo familiar)
+    maxAsistentes: 4,
     pedirRestricciones: true,
   },
 
   // ── Regalos ─────────────────────────────────────────────────────────
   regalos: {
-    // FICTICIOS: reemplazar por los datos reales antes de compartir.
-    titular: "Valentina Ejemplo",
-    alias: "valen.mis15.ficticio",
-    cbu: "0000003100000000000000",
-    banco: "Banco de ejemplo", //    opcional
+    titular: "Montserrat Catalina Guerrero",
+    alias: "366.guerrero.crin.mp",
+    cbu: "0000003100038214082572", // es un CVU de Mercado Pago (22 dígitos, verificado)
+    banco: "", //                    opcional
   },
 
   // ── Música ──────────────────────────────────────────────────────────

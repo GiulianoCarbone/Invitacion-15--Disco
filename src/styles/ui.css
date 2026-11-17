@@ -211,10 +211,13 @@ html[data-motion="off"] .modal.is-closing { animation-direction: reverse; }
 
 .bank { display: grid; gap: 10px; width: 100%; margin-top: 8px; text-align: left; }
 .bank__row {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px;
   padding: 14px 12px 14px 16px; border-radius: 18px;
   background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px var(--c-line);
 }
+/* el dato se queda con el espacio libre; si no entra junto al botón, el botón baja y se estira */
+.bank__row > div { flex: 999 0 auto; max-width: 100%; }
+.bank__row > .copy-btn { flex: 1 0 auto; }
 .bank__row dt { font-family: var(--f-display); font-weight: 600; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-text-3); }
 .bank__row dd { margin-top: 3px; font-weight: 800; font-size: 17px; line-height: 1.3; overflow-wrap: anywhere; -webkit-user-select: all; user-select: all; }
 .bank__row--main { background: rgba(255, 45, 149, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 124, 188, 0.4); }

@@ -63,16 +63,16 @@ export function initRsvp(model, { isDemo }) {
     const limit = zonedToDate({ ...model.deadlineP, h: 23, mi: 59, s: 59 }, model.tz);
     deadlineEl.innerHTML = limit && limit.getTime() < Date.now()
       ? `${icon("info")}<span>La fecha para confirmar ya pasó, pero todavía podés avisar.</span>`
-      : `${icon("calendar")}<span>Confirmá antes del <strong>${escapeHtml(model.deadline)}</strong></span>`;
+      : `${icon("calendar")}<span>Confirmá hasta el <strong>${escapeHtml(model.deadline)}</strong></span>`;
   } else {
-    deadlineEl.innerHTML = `${icon("calendar")}<span>Confirmá antes del <span class="ph">${escapeHtml(conf.fechaLimite || "[FECHA_LIMITE_RSVP]")}</span></span>`;
+    deadlineEl.innerHTML = `${icon("calendar")}<span>Confirmá hasta el <span class="ph">${escapeHtml(conf.fechaLimite || "[FECHA_LIMITE_RSVP]")}</span></span>`;
   }
 
   // Acompañantes
   const max = Math.max(1, Math.min(20, Number(conf.maxAsistentes) || 1));
   const allowGuests = !!conf.permiteAcompanantes && max > 1;
   guests.max = String(max);
-  $("#rsvp-guests-hint").textContent = `Hasta ${max} personas por confirmación.`;
+  $("#rsvp-guests-hint").textContent = `Contá solo a las personas incluidas en tu invitación (hasta ${max}).`;
   const clamp = () => {
     let v = Math.round(Number(guests.value) || 1);
     v = Math.max(1, Math.min(max, v));
