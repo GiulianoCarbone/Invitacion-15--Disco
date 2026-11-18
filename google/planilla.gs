@@ -27,14 +27,25 @@ var CLAVE_LISTA = "PEGAR_ACA_LA_CLAVE";
 var TABS = {
   confirmacion: {
     name: "Confirmaciones",
-    headers: ["Fecha y hora", "Nombre y apellido", "Asistencia", "Personas", "Restricciones alimentarias", "ID"],
+    headers: ["Fecha y hora", "Nombre y apellido", "Asistencia", "Personas", "Acompañantes", "Restricciones alimentarias", "ID"],
+    // Planillas creadas antes de "Acompañantes": se inserta la columna después de "Personas"
+    // (las filas que ya estaban se corren solas y quedan con ese dato vacío).
+    migrate: function (sheet) {
+      if (sheet.getLastRow() === 0) return;
+      var head = sheet.getRange(1, 1, 1, Math.max(1, sheet.getLastColumn())).getValues()[0];
+      if (head.indexOf("Acompañantes") !== -1 || head[3] !== "Personas") return;
+      sheet.insertColumnAfter(4);
+      sheet.getRange(1, 5).setValue("Acompañantes").setFontWeight("bold");
+    },
     row: function (d) {
       var yes = d.asistencia === "si";
+      var personas = yes ? Math.max(1, Math.min(20, parseInt(d.personas, 10) || 1)) : 0;
       return [
         new Date(),
         clean(d.nombre, 80),
         yes ? "Sí" : "No",
-        yes ? Math.max(1, Math.min(20, parseInt(d.personas, 10) || 1)) : 0,
+        personas,
+        yes ? companions(d.acompanantes, personas - 1) : "",
         yes ? clean(d.restricciones, 140) : "",
         clean(d.id, 40),
       ];
@@ -61,7 +72,11 @@ function doGet(e) {
       ok: true,
       actualizado: new Date().toISOString(),
       confirmaciones: readTab(ss, TABS.confirmacion, function (r) {
-        return { fecha: iso(r[0]), nombre: String(r[1]), asistencia: r[2] === "Sí" ? "si" : "no", personas: Number(r[3]) || 0, restricciones: String(r[4] || "") };
+        return {
+          fecha: iso(r[0]), nombre: String(r[1]), asistencia: r[2] === "Sí" ? "si" : "no", personas: Number(r[3]) || 0,
+          acompanantes: String(r[4] || "").split(",").map(function (s) { return s.trim(); }).filter(String),
+          restricciones: String(r[5] || ""),
+        };
       }),
       canciones: readTab(ss, TABS.cancion, function (r) {
         return { fecha: iso(r[0]), tema: String(r[1]), nombre: String(r[2] || "") };
@@ -75,6 +90,12 @@ function doGet(e) {
 function readTab(ss, tab, map) {
   var sheet = ss.getSheetByName(tab.name);
   if (!sheet || sheet.getLastRow() < 2) return [];
+  if (tab.migrate) {
+    // con candado: varias pestañas de la lista abiertas no insertan la columna dos veces
+    var lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try { tab.migrate(sheet); } finally { lock.releaseLock(); }
+  }
   return sheet.getRange(2, 1, sheet.getLastRow() - 1, tab.headers.length).getValues().map(map);
 }
 
@@ -118,7 +139,18 @@ function getSheet(tab) {
     sheet.getRange(1, 1, 1, tab.headers.length).setFontWeight("bold");
     sheet.setFrozenRows(1);
   }
+  if (tab.migrate) tab.migrate(sheet);
   return sheet;
+}
+
+/** Nombres de los acompañantes en una celda, separados por coma (como mucho `max`). */
+function companions(list, max) {
+  if (!Array.isArray(list) || max < 1) return "";
+  return list.slice(0, max)
+    .map(function (n) { return clean(String(n == null ? "" : n).replace(/,/g, " "), 80).replace(/^'/, ""); })
+    .filter(String)
+    .join(", ")
+    .replace(/^([=+\-@])/, "'$1");
 }
 
 /** Revisa los últimos 50 envíos. */

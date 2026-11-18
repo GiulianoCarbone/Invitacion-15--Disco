@@ -490,6 +490,8 @@ html[data-motion="off"] .countdown__grid.is-pending .cd-num { animation: none; }
   -moz-appearance: textfield; appearance: textfield;
 }
 .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.companions { display: grid; gap: 10px; }
+.companion { display: grid; gap: 6px; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .rsvp__note { font-size: 14.5px; line-height: 1.45; color: var(--c-text-3); text-align: center; margin-top: -8px; }
 .rsvp__status:empty { display: none; }

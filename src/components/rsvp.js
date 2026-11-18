@@ -51,6 +51,8 @@ export function initRsvp(model, { isDemo }) {
   const attendErr = $("#rsvp-attend-error");
   const guestsField = $("[data-guests]", form);
   const guests = $("#rsvp-guests");
+  const compField = $("[data-companions]", form);
+  const compList = $("[data-companion-list]", form);
   const dietField = $("[data-diet]", form);
   const diet = $("#rsvp-diet");
   const status = $("[data-rsvp-status]", form);
@@ -73,11 +75,49 @@ export function initRsvp(model, { isDemo }) {
   const allowGuests = !!conf.permiteAcompanantes && max > 1;
   guests.max = String(max);
   $("#rsvp-guests-hint").textContent = `Contá solo a las personas incluidas en tu invitación (hasta ${max}).`;
+
+  // Un campo por acompañante (personas − 1). Si restan y vuelven a sumar, se recupera lo escrito.
+  const compSaved = [];
+  const compInputs = () => $$("input", compList);
+  const compError = (inp) => $(`#${inp.id}-error`, compList);
+  function makeCompanion(i) {
+    const row = document.createElement("div");
+    row.className = "companion";
+    const id = `rsvp-comp-${i + 1}`;
+    row.innerHTML = `
+      <div class="field__control">
+        ${icon("user")}
+        <input id="${id}" type="text" autocomplete="off" autocapitalize="words" enterkeyhint="next" maxlength="80"
+          placeholder="Acompañante ${i + 1}" aria-label="Acompañante ${i + 1}: nombre y apellido" aria-describedby="${id}-error">
+      </div>
+      <p class="field__error" id="${id}-error" hidden></p>`;
+    const inp = $("input", row);
+    inp.value = compSaved[i] || "";
+    inp.addEventListener("input", () => {
+      compSaved[i] = inp.value;
+      if (inp.getAttribute("aria-invalid") === "true") validateCompanion(inp);
+    });
+    return row;
+  }
+  function syncCompanions() {
+    const n = allowGuests ? (Number(guests.value) || 1) - 1 : 0;
+    const rows = compList.children;
+    while (rows.length < n) compList.appendChild(makeCompanion(rows.length));
+    while (rows.length > n) rows[rows.length - 1].remove();
+    compField.hidden = !(attending() === "si" && n > 0);
+  }
+  function validateCompanion(inp) {
+    const ok = inp.value.trim().length >= 2;
+    setError(inp, compError(inp), ok ? "" : "Escribí el nombre de quien viene con vos.");
+    return ok;
+  }
+
   const clamp = () => {
     let v = Math.round(Number(guests.value) || 1);
     v = Math.max(1, Math.min(max, v));
     guests.value = String(v);
     $$("[data-step]", guestsField).forEach((b) => (b.disabled = (b.dataset.step === "-1" && v <= 1) || (b.dataset.step === "1" && v >= max)));
+    syncCompanions();
   };
   clamp();
   guestsField.addEventListener("click", (e) => {
@@ -88,10 +128,11 @@ export function initRsvp(model, { isDemo }) {
   });
   guests.addEventListener("change", clamp);
 
-  const attending = () => form.elements.asistencia.value;
+  function attending() { return form.elements.asistencia.value; }
   function syncExtras() {
     const yes = attending() === "si";
     guestsField.hidden = !(yes && allowGuests);
+    syncCompanions();
     dietField.hidden = !(yes && conf.pedirRestricciones !== false);
   }
   form.addEventListener("change", (e) => {
@@ -124,11 +165,14 @@ export function initRsvp(model, { isDemo }) {
 
   function collect() {
     const yes = attending() === "si";
+    const personas = yes ? (allowGuests ? Number(guests.value) || 1 : 1) : 0;
     return {
       tipo: "confirmacion",
       nombre: nameInput.value.trim().replace(/\s+/g, " "),
       asistencia: yes ? "si" : "no",
-      personas: yes ? (allowGuests ? Number(guests.value) || 1 : 1) : 0,
+      personas,
+      // la coma separa nombres en la planilla: dentro de un nombre se reemplaza por espacio
+      acompanantes: personas > 1 ? compInputs().map((i) => i.value.replace(/,/g, " ").trim().replace(/\s+/g, " ")) : [],
       restricciones: yes && conf.pedirRestricciones !== false ? diet.value.trim() : "",
       web: form.elements.web?.value || "",
     };
@@ -139,6 +183,7 @@ export function initRsvp(model, { isDemo }) {
       `Asistencia: ${d.asistencia === "si" ? "¡Voy a estar!" : "No voy a poder ir"}`,
     ];
     if (d.asistencia === "si" && allowGuests) lines.push(`Personas: ${d.personas}`);
+    if (d.acompanantes.length) lines.push(`Acompañantes: ${d.acompanantes.join(", ")}`);
     if (d.restricciones) lines.push(`Restricciones alimentarias: ${d.restricciones}`);
     return lines.join("\n");
   }
@@ -171,6 +216,10 @@ export function initRsvp(model, { isDemo }) {
       return;
     }
     clamp();
+    if (attending() === "si") {
+      const badComp = compInputs().filter((inp) => !validateCompanion(inp));
+      if (badComp.length) { badComp[0].focus(); return; }
+    }
     const data = collect();
     const yes = data.asistencia === "si";
     const hadFocus = document.activeElement === submit;

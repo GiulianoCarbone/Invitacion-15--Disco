@@ -90,6 +90,10 @@
   }
   .item__count small { display: block; margin-top: 4px; font: 600 11px/1 var(--f-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-text-2); }
   .item__meta { font-size: 15px; color: var(--c-text-2); }
+  .item__with { grid-column: 1 / -1; display: grid; gap: 6px; margin-top: 6px; }
+  .item__with ul { display: flex; flex-wrap: wrap; gap: 6px; }
+  .item__with li { padding: 4px 10px; border-radius: 999px; font-size: 15px; font-weight: 700; background: rgba(139, 61, 255, 0.16); box-shadow: inset 0 0 0 1px rgba(187, 155, 255, 0.4); }
+  .item__with-label { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-text-3); }
   .item__diet { grid-column: 1 / -1; margin-top: 6px; padding: 8px 12px; border-radius: 12px; font-size: 16px; font-weight: 700; color: #ffe3a3; background: rgba(255, 200, 80, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 210, 120, 0.3); }
   .item__changed { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--c-violet-text); box-shadow: inset 0 0 0 1px rgba(187, 155, 255, 0.45); }
   .item--new { box-shadow: inset 0 0 0 1.5px rgba(143, 240, 198, 0.55), 0 0 22px -8px rgba(143, 240, 198, 0.6); }
@@ -233,7 +237,7 @@
       empty.textContent = q ? "No hay canciones que coincidan con la búsqueda." : "Todavía nadie sugirió canciones.";
       empty.hidden = rows.length > 0;
     } else {
-      const rows = d[state.tab].filter((p) => !q || norm(p.nombre).includes(q));
+      const rows = d[state.tab].filter((p) => !q || [p.nombre, ...(p.acompanantes || [])].some((n) => norm(n).includes(q)));
       html = rows.map((p) => {
         const isNew = lastSeen && new Date(p.fecha).getTime() > lastSeen;
         const count = Number(p.personas) || 1;
@@ -241,6 +245,7 @@
           <span class="item__name">${esc(p.nombre)}${isNew ? '<span class="item__new">Nuevo</span>' : ""}${p.times > 1 ? '<span class="item__changed">Actualizó su respuesta</span>' : ""}</span>
           ${state.tab === "si" ? `<span class="item__count">${count}<small>${count === 1 ? "persona" : "personas"}</small></span>` : ""}
           <span class="item__meta">${esc(fmtDate(p.fecha))}</span>
+          ${state.tab === "si" && p.acompanantes?.length ? `<div class="item__with"><span class="item__with-label">Viene con</span><ul>${p.acompanantes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>` : ""}
           ${state.tab === "si" && p.restricciones ? `<span class="item__diet">Comida: ${esc(p.restricciones)}</span>` : ""}
         </li>`;
       }).join("");
@@ -253,10 +258,10 @@
 
   const DEMO = {
     confirmaciones: [
-      { fecha: new Date(Date.now() - 20 * 60e3).toISOString(), nombre: "Laura Gómez", asistencia: "si", personas: 3, restricciones: "Un celíaco" },
-      { fecha: new Date(Date.now() - 3 * 3600e3).toISOString(), nombre: "Marcos Díaz", asistencia: "si", personas: 2, restricciones: "" },
+      { fecha: new Date(Date.now() - 20 * 60e3).toISOString(), nombre: "Laura Gómez", asistencia: "si", personas: 3, acompanantes: ["Diego Gómez", "Martina Gómez"], restricciones: "Un celíaco" },
+      { fecha: new Date(Date.now() - 3 * 3600e3).toISOString(), nombre: "Marcos Díaz", asistencia: "si", personas: 2, acompanantes: ["Julieta Ríos"], restricciones: "" },
       { fecha: new Date(Date.now() - 26 * 3600e3).toISOString(), nombre: "Sofía Romero", asistencia: "no", personas: 0, restricciones: "" },
-      { fecha: new Date(Date.now() - 2 * 86400e3).toISOString(), nombre: "Familia Pérez", asistencia: "si", personas: 4, restricciones: "Vegetariana" },
+      { fecha: new Date(Date.now() - 2 * 86400e3).toISOString(), nombre: "Familia Pérez", asistencia: "si", personas: 4, acompanantes: [], restricciones: "Vegetariana" },
       { fecha: new Date(Date.now() - 3 * 86400e3).toISOString(), nombre: "Marcos Diaz", asistencia: "no", personas: 0, restricciones: "" },
     ],
     canciones: [
